@@ -1,10 +1,10 @@
-import QRScannerHome from "@/components/pages/QRSanner";
+import QRGenerator from "@/components/pages/QRGenerator";
 import React from "react";
 
 function page() {
   return (
     <div>
-      <QRScannerHome />
+      <QRGenerator />
     </div>
   );
 }
