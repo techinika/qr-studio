@@ -124,7 +124,7 @@ export default function IndustryDetailPage() {
             <span className="bg-emerald-100 text-emerald-700 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest mb-6 inline-block">
               {data.subtitle}
             </span>
-            <h1 className="text-5xl md:text-7xl font-black uppercase italic tracking-tighter text-slate-900 mb-8 leading-[0.9]">
+            <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter text-slate-900 mb-8 leading-[0.9]">
               QR Codes For <br />
               <span className="text-emerald-500">
                 {data.title.split(" ")[0]}
@@ -154,7 +154,7 @@ export default function IndustryDetailPage() {
       <section className="py-24 bg-slate-50 border-y border-slate-100">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-20">
-            <h2 className="text-3xl font-black uppercase italic tracking-tighter mb-4">
+            <h2 className="text-3xl font-black uppercase tracking-tighter mb-4">
               Why it works for {data.title.split(" ")[0]}
             </h2>
             <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.3em]">
@@ -171,7 +171,7 @@ export default function IndustryDetailPage() {
                 <div className="w-12 h-12 bg-slate-900 text-emerald-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                   <CheckCircle2 size={24} />
                 </div>
-                <h3 className="font-black uppercase italic text-xl text-slate-900 mb-3">
+                <h3 className="font-black uppercase text-xl text-slate-900 mb-3">
                   {f.title}
                 </h3>
                 <p className="text-slate-500 text-sm font-medium leading-relaxed">
@@ -187,7 +187,7 @@ export default function IndustryDetailPage() {
         <div className="max-w-3xl mx-auto bg-slate-900 p-16 rounded-[4rem] text-white shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/20 blur-[100px] -mr-32 -mt-32"></div>
           <Zap className="mx-auto mb-8 text-emerald-400" size={48} />
-          <h2 className="text-4xl font-black uppercase italic tracking-tighter mb-6 leading-tight">
+          <h2 className="text-4xl font-black uppercase tracking-tighter mb-6 leading-tight">
             Ready to automate your <br /> {data.title.split(" ")[0]} experience?
           </h2>
           <Link

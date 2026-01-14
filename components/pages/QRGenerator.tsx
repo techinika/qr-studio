@@ -17,6 +17,7 @@ import {
 import Footer from "../parts/Footer";
 import Nav from "../parts/Nav";
 import Link from "next/link";
+import AdBanner from "../parts/AdBanner";
 
 export default function QRGenerator() {
   const [url, setUrl] = useState("https://ubunifu.techinika.co.rw");
@@ -51,6 +52,8 @@ export default function QRGenerator() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col font-sans">
       <Nav />
+
+      <AdBanner />
 
       <main className="grow max-w-6xl mx-auto w-full px-6 py-12">
         <div className="max-w-2xl mb-12">
@@ -280,6 +283,8 @@ export default function QRGenerator() {
           </div>
         </div>
       </main>
+
+      <AdBanner />
 
       <Footer />
     </div>

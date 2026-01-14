@@ -20,6 +20,8 @@ import {
 } from "lucide-react";
 import Footer from "../parts/Footer";
 import Nav from "../parts/Nav";
+import AdBanner from "../parts/AdBanner";
+import Link from "next/link";
 
 export default function QRScannerHome() {
   const [scanResult, setScanResult] = useState<string | null>(null);
@@ -30,9 +32,6 @@ export default function QRScannerHome() {
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const scannerId = "qr-reader";
 
-  // app/page.tsx
-
-  // Helper to initialize scanner safely - ensures element exists first
   const getScanner = () => {
     try {
       if (!scannerRef.current) {
@@ -50,7 +49,6 @@ export default function QRScannerHome() {
     setError(null);
     setIsCameraActive(true);
 
-    // Give React a tiny beat to ensure the element is visible if it was hidden
     setTimeout(async () => {
       const scanner = getScanner();
       if (!scanner) return;
@@ -112,7 +110,6 @@ export default function QRScannerHome() {
       <Nav />
 
       <main className="grow max-w-6xl mx-auto w-full px-6 py-12">
-        {/* Header Section */}
         <div className="max-w-2xl mb-16">
           <h1 className="text-5xl font-black text-slate-900 mb-4 leading-tight uppercase tracking-tighter">
             Universal <span className="text-emerald-500">QR Scanner</span>
@@ -123,12 +120,12 @@ export default function QRScannerHome() {
           </p>
         </div>
 
-        {/* Scanner Grid */}
+        <AdBanner />
+
         <div className="grid lg:grid-cols-2 gap-10 mb-24">
           <div className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-[2.5rem] blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
+            <div className="absolute -inset-1 bg-linear-to-r from-emerald-400 to-teal-500 rounded-[2.5rem] blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
             <div className="relative bg-white p-8 rounded-[2.5rem] border border-emerald-50 shadow-sm h-full flex flex-col min-h-[450px]">
-              {/* FIXED: The ID is now always present but hidden visually when not needed */}
               <div
                 className={`${isCameraActive ? "block" : "hidden"} space-y-4`}
               >
@@ -171,7 +168,6 @@ export default function QRScannerHome() {
                       <Upload size={20} /> Scan from File
                     </div>
                   </div>
-                  {/* HIDDEN SCANNER FOR FILE UPLOAD TARGET */}
                   <div id={scannerId} className="hidden"></div>
                 </div>
               )}
@@ -221,14 +217,14 @@ export default function QRScannerHome() {
                       {copied ? "Copied" : "Copy"}
                     </button>
                     {scanResult.startsWith("http") && (
-                      <a
+                      <Link
                         href={scanResult}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center justify-center gap-2 border-2 border-slate-200 text-slate-700 py-5 rounded-2xl font-black uppercase tracking-tighter hover:bg-slate-50 transition-all"
                       >
                         <ExternalLink size={20} /> Open Link
-                      </a>
+                      </Link>
                     )}
                   </div>
                 </div>
@@ -258,7 +254,6 @@ export default function QRScannerHome() {
           </div>
         </div>
 
-        {/* UPCOMING PRO FEATURES & PRICING */}
         <section className="mt-32 pb-20">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-black text-slate-900 mb-4 uppercase">
@@ -271,7 +266,6 @@ export default function QRScannerHome() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {/* Monthly Plan */}
             <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all group">
               <div className="mb-8">
                 <h3 className="text-xl font-black uppercase mb-2">Monthly</h3>
@@ -291,7 +285,6 @@ export default function QRScannerHome() {
               </button>
             </div>
 
-            {/* Annual Plan - Featured */}
             <div className="bg-slate-900 p-10 rounded-[3rem] border border-emerald-500/30 shadow-2xl shadow-emerald-500/10 relative transform lg:scale-110">
               <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-emerald-500 text-white px-6 py-1 rounded-full text-xs font-black uppercase tracking-widest">
                 Best Value
@@ -319,7 +312,6 @@ export default function QRScannerHome() {
               </button>
             </div>
 
-            {/* Lifetime Plan */}
             <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all group">
               <div className="mb-8">
                 <h3 className="text-xl font-black uppercase mb-2">Lifetime</h3>
@@ -342,7 +334,8 @@ export default function QRScannerHome() {
             </div>
           </div>
 
-          {/* Feature Highlight Section */}
+          <AdBanner />
+
           <div className="mt-24 grid sm:grid-cols-2 lg:grid-cols-4 gap-12 border-t border-slate-100 pt-16">
             <FeatureCard
               icon={<Lock />}
@@ -368,21 +361,9 @@ export default function QRScannerHome() {
         </section>
       </main>
 
-      <Footer />
+      <AdBanner />
 
-      <style jsx global>{`
-        @keyframes scan-line {
-          0% {
-            top: 0%;
-          }
-          100% {
-            top: 100%;
-          }
-        }
-        .animate-scan-line {
-          animation: scan-line 2.5s linear infinite;
-        }
-      `}</style>
+      <Footer />
     </div>
   );
 }
