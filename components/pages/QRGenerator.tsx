@@ -81,7 +81,7 @@ export default function QRGenerator() {
             </div>
 
             {/* Step 2: Appearance */}
-            <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm">
+            <div className="bg-white p-8 rounded-4xl border border-slate-100 shadow-sm">
               <div className="flex items-center gap-3 mb-6">
                 <div className="bg-emerald-50 p-2 rounded-lg text-emerald-600">
                   <Palette size={20} />
@@ -125,7 +125,7 @@ export default function QRGenerator() {
             </div>
 
             {/* Step 3: Branding */}
-            <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm">
+            <div className="bg-white p-8 rounded-4xl border border-slate-100 shadow-sm">
               <div className="flex items-center gap-3 mb-6">
                 <div className="bg-emerald-50 p-2 rounded-lg text-emerald-600">
                   <ImageIcon size={20} />
@@ -227,7 +227,7 @@ export default function QRGenerator() {
 
                 <div
                   ref={qrRef}
-                  className="p-6 rounded-[2rem] bg-white shadow-[0_0_50px_rgba(16,185,129,0.2)]"
+                  className="p-6 rounded-4xl bg-white shadow-[0_0_50px_rgba(16,185,129,0.2)]"
                 >
                   <QRCodeCanvas
                     value={url || " "}
@@ -262,7 +262,7 @@ export default function QRGenerator() {
               </div>
 
               {/* Extra Tip Card */}
-              <div className="bg-emerald-500/5 border border-emerald-500/20 p-6 rounded-[2rem]">
+              <div className="bg-emerald-500/5 border border-emerald-500/20 p-6 rounded-4xl">
                 <div className="flex gap-3 items-start">
                   <Layers className="text-emerald-500 shrink-0" size={20} />
                   <div>

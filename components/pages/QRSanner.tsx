@@ -151,7 +151,7 @@ export default function QRScannerHome() {
                 <div className="space-y-4 my-auto">
                   <button
                     onClick={startScanner}
-                    className="w-full flex flex-col items-center justify-center gap-4 bg-emerald-500 hover:bg-emerald-600 text-white p-10 rounded-[2rem] transition-all shadow-xl shadow-emerald-200 active:scale-95"
+                    className="w-full flex flex-col items-center justify-center gap-4 bg-emerald-500 hover:bg-emerald-600 text-white p-10 rounded-4xl transition-all shadow-xl shadow-emerald-200 active:scale-95"
                   >
                     <Camera size={40} />
                     <span className="text-2xl font-black uppercase tracking-tight">
@@ -166,7 +166,7 @@ export default function QRScannerHome() {
                       onChange={handleFileUpload}
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     />
-                    <div className="w-full flex items-center justify-center gap-3 border-2 border-dashed border-slate-200 py-6 rounded-[2rem] font-bold text-slate-400 group-hover/upload:border-emerald-300 group-hover/upload:text-emerald-500 transition-all">
+                    <div className="w-full flex items-center justify-center gap-3 border-2 border-dashed border-slate-200 py-6 rounded-4xl font-bold text-slate-400 group-hover/upload:border-emerald-300 group-hover/upload:text-emerald-500 transition-all">
                       <Upload size={20} /> Scan from File
                     </div>
                   </div>

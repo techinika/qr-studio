@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${RubikFont.variable} antialiased`}>{children}</body>
-      <GoogleAnalytics gaId="G-KCHNK2L43X" />
+      <GoogleAnalytics gaId="G-2SS6CWQVDN" />
     </html>
   );
 }
