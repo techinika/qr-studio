@@ -45,6 +45,10 @@ export default function RootLayout({
           crossOrigin="anonymous"
           strategy="afterInteractive"
         />
+        <meta
+          name="google-site-verification"
+          content="D3LBrk5L1VNTNkkazkp5cAkDmWp_dzOE7ORnVxdvvP4"
+        />
       </head>
       <body className={`${RubikFont.variable} antialiased`}>{children}</body>
       <GoogleAnalytics gaId="G-2SS6CWQVDN" />
