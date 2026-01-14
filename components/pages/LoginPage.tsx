@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Nav from "../parts/Nav";
+import AdBanner from "../parts/AdBanner";
 
 export default function LoginPage() {
   // Logic for Google Auth would go here
@@ -125,6 +126,7 @@ export default function LoginPage() {
           ← Back to Scanner
         </Link>
       </div>
+      <AdBanner />
     </div>
   );
 }
@@ -134,9 +136,7 @@ function BenefitItem({ title, desc }: { title: string; desc: string }) {
     <div className="flex gap-4 items-start">
       <CheckCircle2 className="text-emerald-500 shrink-0" size={20} />
       <div>
-        <p className="font-bold text-sm uppercase tracking-tight">
-          {title}
-        </p>
+        <p className="font-bold text-sm uppercase tracking-tight">{title}</p>
         <p className="text-xs text-slate-400">{desc}</p>
       </div>
     </div>

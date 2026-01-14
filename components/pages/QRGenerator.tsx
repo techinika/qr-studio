@@ -53,8 +53,6 @@ export default function QRGenerator() {
     <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col font-sans">
       <Nav />
 
-      <AdBanner />
-
       <main className="grow max-w-6xl mx-auto w-full px-6 py-12">
         <div className="max-w-2xl mb-12">
           <h1 className="text-5xl font-black text-slate-900 mb-4 leading-tight">
@@ -64,6 +62,7 @@ export default function QRGenerator() {
             Create high-quality, branded QR codes with custom colors and logos.
           </p>
         </div>
+        <AdBanner />
 
         <div className="grid lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2 space-y-6">

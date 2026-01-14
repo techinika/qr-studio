@@ -14,6 +14,7 @@ import {
 import Link from "next/link";
 import Nav from "../parts/Nav";
 import Footer from "../parts/Footer";
+import AdBanner from "../parts/AdBanner";
 
 const industries = [
   {
@@ -179,6 +180,7 @@ export default function SolutionsPage() {
           </div>
         </div>
       </section>
+      <AdBanner />
       <Footer />
     </div>
   );

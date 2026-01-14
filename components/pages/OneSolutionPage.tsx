@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useParams, notFound } from "next/navigation";
 import Nav from "../parts/Nav";
 import Footer from "../parts/Footer";
+import AdBanner from "../parts/AdBanner";
 
 export const industryContent: any = {
   restaurants: {
@@ -198,6 +199,7 @@ export default function IndustryDetailPage() {
           </Link>
         </div>
       </section>
+      <AdBanner />
       <Footer />
     </div>
   );
