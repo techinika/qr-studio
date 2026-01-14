@@ -69,7 +69,7 @@ const industries = [
 
 export default function SolutionsPage() {
   return (
-    <div className="min-h-screen bg-white font-sans">
+    <div className="min-h-screen bg-white">
       <Nav />
       <section className="pt-32 pb-20 px-6 bg-slate-900 text-white overflow-hidden relative">
         <div className="absolute top-0 right-0 w-1/2 h-full bg-emerald-500/10 blur-[120px] rounded-full -mr-20" />

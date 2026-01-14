@@ -23,7 +23,7 @@ export default function ProfileSettings() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col">
       <main className="grow max-w-4xl mx-auto w-full px-6 py-12">
         {/* PROFILE HEADER */}
         <div className="flex flex-col md:flex-row items-center gap-8 mb-12 bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm relative overflow-hidden">

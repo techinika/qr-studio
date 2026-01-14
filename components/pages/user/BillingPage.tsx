@@ -20,7 +20,7 @@ export default function BillingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col">
       <main className="grow max-w-5xl mx-auto w-full px-6 py-12">
         <div className="mb-10">
           <h1 className="text-4xl font-black text-slate-900 uppercase tracking-tighter">

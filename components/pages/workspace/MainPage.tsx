@@ -73,7 +73,7 @@ export default function Workspace() {
   }, [searchQuery]);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col">
       <main className="grow max-w-7xl mx-auto w-full px-6 py-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
           <div>

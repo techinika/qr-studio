@@ -3,6 +3,8 @@ import { Rubik } from "next/font/google";
 import "./globals.css";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import Script from "next/script";
+import { Toaster } from "sonner";
+import { AuthProvider } from "@/lib/AuthContext";
 
 const RubikFont = Rubik({
   variable: "--font-rubik",
@@ -50,7 +52,12 @@ export default function RootLayout({
           content="D3LBrk5L1VNTNkkazkp5cAkDmWp_dzOE7ORnVxdvvP4"
         />
       </head>
-      <body className={`${RubikFont.variable} antialiased`}>{children}</body>
+      <body className={`${RubikFont.variable} antialiased`}>
+        <AuthProvider>
+          <Toaster position="top-center" expand={true} richColors />
+          {children}
+        </AuthProvider>
+      </body>
       <GoogleAnalytics gaId="G-2SS6CWQVDN" />
     </html>
   );

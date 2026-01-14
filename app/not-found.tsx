@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 export default function NotFound() {
   const router = useRouter();
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col">
       <Nav />
 
       <main className="grow flex flex-col items-center justify-center px-6 py-20">

@@ -106,7 +106,7 @@ export default function QRScannerHome() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col">
       <Nav />
 
       <main className="grow max-w-6xl mx-auto w-full px-6 py-12">

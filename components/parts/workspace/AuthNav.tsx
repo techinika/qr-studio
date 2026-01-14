@@ -122,13 +122,13 @@ export default function WorkspaceNav() {
           {isUserMenuOpen && (
             <div className="absolute top-full right-0 mt-2 w-56 bg-white border border-slate-100 rounded-2xl shadow-2xl p-2 animate-in fade-in slide-in-from-top-2 duration-200">
               <Link
-                href="/profile"
+                href="/workspace/profile"
                 className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-bold text-sm transition-all"
               >
                 <Settings size={18} /> Profile Settings
               </Link>
               <Link
-                href="/profile/billing"
+                href="/workspace/profile/billing"
                 className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-bold text-sm transition-all"
               >
                 <CreditCard size={18} /> Billing & Plans
@@ -139,7 +139,7 @@ export default function WorkspaceNav() {
               >
                 <Users size={18} /> Team Management
               </Link>
-              <div className="h-[1px] bg-slate-50 my-2" />
+              <div className="h-px bg-slate-50 my-2" />
               <button
                 onClick={() => console.log("Logging out...")}
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-red-50 text-red-500 font-bold text-sm transition-all"
