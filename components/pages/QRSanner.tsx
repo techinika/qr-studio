@@ -113,7 +113,7 @@ export default function QRScannerHome() {
       <main className="grow max-w-6xl mx-auto w-full px-6 py-12">
         {/* Header Section */}
         <div className="max-w-2xl mb-16">
-          <h1 className="text-5xl font-black text-slate-900 mb-4 leading-tight italic uppercase tracking-tighter">
+          <h1 className="text-5xl font-black text-slate-900 mb-4 leading-tight uppercase tracking-tighter">
             Universal <span className="text-emerald-500">QR Scanner</span>
           </h1>
           <p className="text-lg text-slate-500">
@@ -180,7 +180,7 @@ export default function QRScannerHome() {
                   <div className="bg-emerald-100 p-8 rounded-full border-4 border-emerald-50">
                     <CheckCircle2 size={56} className="text-emerald-600" />
                   </div>
-                  <h3 className="text-3xl font-black text-slate-800 uppercase italic">
+                  <h3 className="text-3xl font-black text-slate-800 uppercase">
                     Success!
                   </h3>
                   <button
@@ -208,7 +208,7 @@ export default function QRScannerHome() {
 
               {scanResult ? (
                 <div className="space-y-6">
-                  <div className="p-8 bg-slate-50 rounded-3xl border border-slate-100 break-all font-mono text-slate-700 leading-relaxed text-lg shadow-inner">
+                  <div className="p-8 bg-slate-50 rounded-3xl border border-slate-100 break-all text-slate-700 leading-relaxed text-lg shadow-inner">
                     {scanResult}
                   </div>
                   <div className="grid grid-cols-2 gap-4">
@@ -260,12 +260,12 @@ export default function QRScannerHome() {
         {/* UPCOMING PRO FEATURES & PRICING */}
         <section className="mt-32 pb-20">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-black text-slate-900 mb-4 uppercase italic">
-              Level up with <span className="text-emerald-500">QR Man Pro</span>
+            <h2 className="text-4xl font-black text-slate-900 mb-4 uppercase">
+              Level up with{" "}
+              <span className="text-emerald-500">QR Studio Pro</span>
             </h2>
             <p className="text-slate-500 max-w-xl mx-auto">
-              Access powerful tools designed for creators and businesses. Coming
-              soon to Ubunifu Labs.
+              Access powerful tools designed for creators and businesses.
             </p>
           </div>
 
@@ -407,7 +407,7 @@ function FeatureCard({
   return (
     <div className="space-y-4">
       <div className="text-emerald-500">{icon}</div>
-      <h4 className="font-black uppercase italic text-slate-800 tracking-tight">
+      <h4 className="font-black uppercase text-slate-800 tracking-tight">
         {title}
       </h4>
       <p className="text-sm text-slate-500 leading-relaxed">{desc}</p>

@@ -7,14 +7,16 @@ import {
   Link as LinkIcon,
   Palette,
   Image as ImageIcon,
-  ArrowLeft,
-  RefreshCw,
   Sparkles,
   Layers,
+  CopyPlus,
+  Shield,
+  ArrowRight,
+  Zap,
 } from "lucide-react";
-import Link from "next/link";
 import Footer from "../parts/Footer";
 import Nav from "../parts/Nav";
+import Link from "next/link";
 
 export default function QRGenerator() {
   const [url, setUrl] = useState("https://ubunifu.techinika.co.rw");
@@ -39,7 +41,7 @@ export default function QRGenerator() {
       const pngUrl = canvas.toDataURL("image/png");
       const downloadLink = document.createElement("a");
       downloadLink.href = pngUrl;
-      downloadLink.download = "qrman-export.png";
+      downloadLink.download = `qr-studio-${Date.now()}.png`;
       document.body.appendChild(downloadLink);
       downloadLink.click();
       document.body.removeChild(downloadLink);
@@ -98,7 +100,7 @@ export default function QRGenerator() {
                       onChange={(e) => setFgColor(e.target.value)}
                       className="w-12 h-12 rounded-xl cursor-pointer border-none bg-transparent"
                     />
-                    <span className="font-mono font-bold text-slate-600 uppercase">
+                    <span className="font-bold text-slate-600 uppercase">
                       {fgColor}
                     </span>
                   </div>
@@ -114,7 +116,7 @@ export default function QRGenerator() {
                       onChange={(e) => setBgColor(e.target.value)}
                       className="w-12 h-12 rounded-xl cursor-pointer border-none bg-transparent"
                     />
-                    <span className="font-mono font-bold text-slate-600 uppercase">
+                    <span className="font-bold text-slate-600 uppercase">
                       {bgColor}
                     </span>
                   </div>
@@ -158,6 +160,59 @@ export default function QRGenerator() {
                     </button>
                   </div>
                 )}
+              </div>
+            </div>
+            <div className="bg-slate-900 rounded-4xl p-8 text-white relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-500">
+                <Sparkles size={120} />
+              </div>
+
+              <div className="relative z-10">
+                <h3 className="text-2xl font-black uppercase italic tracking-tight mb-6">
+                  Unlock Professional{" "}
+                  <span className="text-emerald-400">QR Tools</span>
+                </h3>
+
+                <div className="grid md:grid-cols-3 gap-6 mb-8">
+                  <div className="flex items-start gap-3">
+                    <div className="bg-emerald-500/20 p-2 rounded-lg text-emerald-400">
+                      <Zap size={18} />
+                    </div>
+                    <div>
+                      <p className="font-bold text-sm">Dynamic Codes</p>
+                      <p className="text-xs text-slate-400">
+                        Change links anytime
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="bg-emerald-500/20 p-2 rounded-lg text-emerald-400">
+                      <CopyPlus size={18} />
+                    </div>
+                    <div>
+                      <p className="font-bold text-sm">Bulk Create</p>
+                      <p className="text-xs text-slate-400">
+                        100+ codes at once
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="bg-emerald-500/20 p-2 rounded-lg text-emerald-400">
+                      <Shield size={18} />
+                    </div>
+                    <div>
+                      <p className="font-bold text-sm">Passwords</p>
+                      <p className="text-xs text-slate-400">Secure your data</p>
+                    </div>
+                  </div>
+                </div>
+
+                <Link
+                  href="/login"
+                  className="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-white px-6 py-3 rounded-xl font-black uppercase tracking-widest text-xs transition-all active:scale-95 shadow-lg shadow-emerald-500/20"
+                >
+                  Upgrade to Pro <ArrowRight size={16} />
+                </Link>
               </div>
             </div>
           </div>

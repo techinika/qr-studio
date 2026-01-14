@@ -18,7 +18,7 @@ function Nav() {
             <div className="bg-emerald-500 p-2 rounded-xl shadow-lg shadow-emerald-200 group-hover:rotate-12 transition-transform">
               <QrCodeIcon className="text-white w-5 h-5" />
             </div>
-            <span className="text-xl font-black tracking-tighter text-slate-800 uppercase italic">
+            <span className="text-xl font-black tracking-tighter text-slate-800 uppercase">
               QR STUDIO
             </span>
           </Link>
