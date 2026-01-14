@@ -13,12 +13,13 @@ import {
   Building2,
 } from "lucide-react";
 import Link from "next/link";
+import { useAuth } from "@/lib/AuthContext";
 
 export default function WorkspaceNav() {
+  const { user } = useAuth();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isTeamMenuOpen, setIsTeamMenuOpen] = useState(false);
 
-  // Mock Data
   const [currentTeam, setCurrentTeam] = useState({
     id: 1,
     name: "Personal Workspace",
@@ -32,7 +33,7 @@ export default function WorkspaceNav() {
 
   return (
     <nav className="bg-white border-b border-slate-100 h-16 sticky top-0 z-[60] px-6">
-      <div className="max-w-[1600px] mx-auto h-full flex items-center justify-between">
+      <div className="max-w-400 mx-auto h-full flex items-center justify-between">
         {/* LEFT: TEAM SWITCHER */}
         <div className="relative">
           <button
@@ -105,7 +106,7 @@ export default function WorkspaceNav() {
           >
             <div className="text-right hidden md:block">
               <p className="text-sm font-black text-slate-800 leading-none">
-                John Doe
+                {user?.displayName}
               </p>
               <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mt-1">
                 Pro Member
@@ -113,8 +114,8 @@ export default function WorkspaceNav() {
             </div>
             <div className="w-10 h-10 rounded-full border-2 border-white shadow-md group-hover:border-emerald-500 transition-all overflow-hidden bg-slate-200">
               <img
-                src="https://api.dicebear.com/7.x/avataaars/svg?seed=John"
-                alt="User Avatar"
+                src={user?.photoURL ?? "/qr-studio.png"}
+                alt="User Profile"
               />
             </div>
           </button>

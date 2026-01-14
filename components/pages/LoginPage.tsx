@@ -15,22 +15,22 @@ import AdBanner from "../parts/AdBanner";
 import { loginWithGoogle } from "@/db/functions/googleLogin";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { useAuth } from "@/lib/AuthContext";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { user } = useAuth();
   const [loggingIn, setLoggingIn] = useState(false);
 
-  useEffect(() => {
-    const authVerify = () => {
-      if (user) {
-        toast.info("You are already logged in. Redirecting to the workspace...");
-        return router.push("/workspace");
-      }
-    };
-    authVerify();
-  }, [user]);
+  //   useEffect(() => {
+  //     const authVerify = () => {
+  //       if (user) {
+  //         toast.info(
+  //           "You are already logged in. Redirecting to the workspace..."
+  //         );
+  //         router.push("/workspace");
+  //       }
+  //     };
+  //     authVerify();
+  //   }, []);
 
   const handleGoogleLogin = async () => {
     setLoggingIn(true);
