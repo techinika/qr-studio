@@ -31,7 +31,7 @@ export default function LoginPage() {
                 <div className="bg-emerald-500 p-2 rounded-xl shadow-lg">
                   <QrCodeIcon className="text-white w-6 h-6" />
                 </div>
-                <span className="text-2xl font-black tracking-tighter uppercase italic">
+                <span className="text-2xl font-black tracking-tighter uppercase">
                   QR STUDIO{" "}
                   <span className="text-emerald-500 text-sm align-top ml-1">
                     PRO
@@ -39,7 +39,7 @@ export default function LoginPage() {
                 </span>
               </div>
 
-              <h1 className="text-4xl font-black leading-tight mb-8 uppercase italic">
+              <h1 className="text-4xl font-black leading-tight mb-8 uppercase">
                 Manage your{" "}
                 <span className="text-emerald-500">QR Universe</span> from one
                 place.
@@ -134,7 +134,7 @@ function BenefitItem({ title, desc }: { title: string; desc: string }) {
     <div className="flex gap-4 items-start">
       <CheckCircle2 className="text-emerald-500 shrink-0" size={20} />
       <div>
-        <p className="font-bold text-sm uppercase tracking-tight italic">
+        <p className="font-bold text-sm uppercase tracking-tight">
           {title}
         </p>
         <p className="text-xs text-slate-400">{desc}</p>

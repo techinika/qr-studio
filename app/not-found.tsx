@@ -24,7 +24,7 @@ export default function NotFound() {
               <Ghost className="text-white w-12 h-12" />
             </div>
 
-            <h2 className="text-4xl font-black text-slate-900 uppercase italic tracking-tighter mb-4">
+            <h2 className="text-4xl font-black text-slate-900 uppercase tracking-tighter mb-4">
               Link <span className="text-emerald-500">Not Found</span>
             </h2>
 

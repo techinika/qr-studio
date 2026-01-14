@@ -14,7 +14,7 @@ function Loading() {
           </div>
 
           <div className="flex flex-col items-center gap-1">
-            <span className="text-white font-black italic uppercase tracking-tighter text-xl">
+            <span className="text-white font-black uppercase tracking-tighter text-xl">
               QR STUDIO
             </span>
             <div className="flex gap-1">

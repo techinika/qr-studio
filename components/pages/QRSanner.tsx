@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { Html5Qrcode } from "html5-qrcode";
 import {
   Camera,
@@ -18,7 +18,6 @@ import {
   ZapIcon,
   Crown,
 } from "lucide-react";
-import Link from "next/link";
 import Footer from "../parts/Footer";
 import Nav from "../parts/Nav";
 
@@ -30,6 +29,8 @@ export default function QRScannerHome() {
 
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const scannerId = "qr-reader";
+
+  // app/page.tsx
 
   // Helper to initialize scanner safely - ensures element exists first
   const getScanner = () => {

@@ -168,7 +168,7 @@ export default function QRGenerator() {
               </div>
 
               <div className="relative z-10">
-                <h3 className="text-2xl font-black uppercase italic tracking-tight mb-6">
+                <h3 className="text-2xl font-black uppercase tracking-tight mb-6">
                   Unlock Professional{" "}
                   <span className="text-emerald-400">QR Tools</span>
                 </h3>

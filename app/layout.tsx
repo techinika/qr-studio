@@ -9,9 +9,25 @@ const RubikFont = Rubik({
 });
 
 export const metadata: Metadata = {
-  title: "QR Studio - QR Code Generation and Scan Wizard",
+  title: "QR STUDIO | Professional Dynamic QR Code Generator & Analytics",
   description:
-    "Generate (Single & Batch) or Scan all your QR codes (Static & Dynamic) in real time.",
+    "Generate, track, and manage secure dynamic QR codes. Features bulk creation, password protection, and real-time scan analytics for teams.",
+  keywords: [
+    "QR code generator",
+    "dynamic QR code",
+    "QR analytics",
+    "bulk QR creation",
+    "secure QR scanner",
+  ],
+  openGraph: {
+    title: "QR STUDIO - The Professional QR Universe",
+    description: "The all-in-one workspace for your QR code strategy.",
+    images: [{ url: "/qr-studio.png", width: 1200, height: 630 }],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default function RootLayout({

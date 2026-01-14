@@ -13,7 +13,7 @@ function Nav() {
   return (
     <>
       <nav className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-emerald-100">
-        <div className="flex items-center justify-between px-6 py-4 max-w-6xl mx-auto">
+        <div className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
           <Link href="/" className="flex items-center gap-3 group">
             <div className="bg-emerald-500 p-2 rounded-xl shadow-lg shadow-emerald-200 group-hover:rotate-12 transition-transform">
               <QrCodeIcon className="text-white w-5 h-5" />
@@ -43,6 +43,16 @@ function Nav() {
               }`}
             >
               Generate
+            </Link>
+            <Link
+              href="/solutions"
+              className={`text-sm font-bold uppercase tracking-widest transition-colors ${
+                isActive("/solutions")
+                  ? "text-emerald-600"
+                  : "text-slate-500 hover:text-emerald-500"
+              }`}
+            >
+              Solutions
             </Link>
           </div>
 
