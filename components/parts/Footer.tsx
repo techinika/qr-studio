@@ -11,7 +11,7 @@ function Footer() {
             <QrCodeIcon className="text-white w-4 h-4" />
           </div>
           <span className="font-black text-slate-800 tracking-tighter uppercase">
-            QR MAN
+            QR STUDIO
           </span>
         </div>
 
