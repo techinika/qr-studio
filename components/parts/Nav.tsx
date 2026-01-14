@@ -1,12 +1,20 @@
 "use client";
 
-import { QrCodeIcon, Scan, PlusSquare, UserCircle } from "lucide-react";
+import { useAuth } from "@/lib/AuthContext";
+import {
+  QrCodeIcon,
+  Scan,
+  PlusSquare,
+  UserCircle,
+  LayoutDashboard,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
 function Nav() {
   const pathname = usePathname();
+  const { user } = useAuth();
 
   const isActive = (path: string) => pathname === path;
 
@@ -56,17 +64,27 @@ function Nav() {
             </Link>
           </div>
 
-          <Link
-            href="/login"
-            className="flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-emerald-600 transition-all shadow-lg shadow-slate-200"
-          >
-            <UserCircle size={18} />
-            <span>Sign In</span>
-          </Link>
+          {user ? (
+            <Link
+              href="/workspace"
+              className="flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-emerald-600 transition-all shadow-lg shadow-slate-200"
+            >
+              <LayoutDashboard size={18} />
+              <span>Dashboard</span>
+            </Link>
+          ) : (
+            <Link
+              href="/login"
+              className="flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-emerald-600 transition-all shadow-lg shadow-slate-200"
+            >
+              <UserCircle size={18} />
+              <span>Sign In</span>
+            </Link>
+          )}
         </div>
       </nav>
 
-      <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-[400px]">
+      <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-100">
         <div className="bg-slate-900/90 backdrop-blur-lg rounded-3xl p-2 shadow-2xl border border-white/10 flex items-center justify-around">
           <Link
             href="/"

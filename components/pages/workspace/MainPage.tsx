@@ -1,76 +1,99 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   FolderRoot,
   History,
   Plus,
   Search,
-  MoreVertical,
   Lock,
   BarChart3,
   CreditCard,
   Calendar,
-  ExternalLink,
-  QrCode,
-  TrendingUp,
-  MousePointer2,
-  Users,
+  LayoutGrid,
 } from "lucide-react";
 import Link from "next/link";
-import WorkspaceNav from "@/components/parts/workspace/AuthNav";
+import { HistoryView } from "@/components/parts/workspace/HistoryView";
+import { useAuth } from "@/lib/AuthContext";
+import {
+  collection,
+  onSnapshot,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
+import { db } from "@/db/firebase";
+import Loading from "@/app/loading";
+import { AnalyticsView } from "@/components/parts/workspace/AnalyticsView";
+import { FoldersView } from "@/components/parts/workspace/FoldersView";
 
 export default function Workspace() {
-  const [hasSubscription, setHasSubscription] = useState(true); // Toggle to see paywall
+  const { workspace } = useAuth();
+  const [hasSubscription, setHasSubscription] = useState(true);
   const [activeTab, setActiveTab] = useState("history");
   const [searchQuery, setSearchQuery] = useState("");
+  const [qrCodes, setQrCodes] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [folders, setFolders] = useState<any[]>([]);
 
-  // --- MOCK DATA ---
   const subInfo = {
     plan: "Annual Pro",
     expires: "Dec 12, 2026",
     status: "Active",
   };
 
-  const qrHistory = [
-    {
-      id: 1,
-      name: "January Campaign",
-      type: "Dynamic",
-      scans: 1240,
-      date: "2026-01-12",
-      url: "https://shop.com/sale",
-    },
-    {
-      id: 2,
-      name: "Office Guest WiFi",
-      type: "Static",
-      scans: 45,
-      date: "2026-01-10",
-      url: "WIFI:S:Office;P:1234;;",
-    },
-    {
-      id: 3,
-      name: "Personal Portfolio",
-      type: "Dynamic",
-      scans: 890,
-      date: "2026-01-05",
-      url: "https://portfolio.me",
-    },
-  ];
+  useEffect(() => {
+    if (!workspace?.id) return;
 
-  const folders = [
-    { id: 1, name: "Product Launch Q4", count: 150, date: "2025-11-20" },
-    { id: 2, name: "Restaurant Menus", count: 12, date: "2025-12-15" },
-    { id: 3, name: "Event Badges", count: 500, date: "2026-01-02" },
-  ];
+    const getData = async () => {
+      setLoading(true);
+      const q = query(
+        collection(db, "qrcodes"),
+        where("workspaceId", "==", workspace.id),
+        orderBy("createdAt", "desc")
+      );
+
+      const folderQuery = query(
+        collection(db, "QRFolders"),
+        where("workspaceId", "==", workspace.id)
+      );
+
+      const unsubFolders = onSnapshot(folderQuery, (snap) => {
+        setFolders(snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+      });
+
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const items = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setQrCodes(items);
+        setLoading(false);
+      });
+
+      return () => {
+        unsubFolders();
+        unsubscribe();
+      };
+    };
+    getData();
+  }, [workspace?.id]);
+
+  const processedFolders = folders.map((folder) => ({
+    ...folder,
+    count: qrCodes.filter((qr) => qr.folderId === folder.id).length,
+  }));
 
   const filteredHistory = useMemo(() => {
-    return qrHistory.filter((item) =>
+    return qrCodes.filter((item) =>
       item.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [searchQuery]);
+  }, [qrCodes, searchQuery]);
+
+  if (loading) return <Loading />;
+
+  console.log(qrCodes);
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col">
@@ -113,8 +136,7 @@ export default function Workspace() {
               />
             </div>
 
-            {/* SUBSCRIPTION STATUS CARD */}
-            <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4">
+            <div className="bg-white p-6 rounded-4xl border border-slate-100 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                   Subscription
@@ -135,7 +157,7 @@ export default function Workspace() {
                 </div>
               </div>
               <Link
-                href="/#pricing"
+                href="/workspace/profile/billing"
                 className="block text-center py-3 rounded-xl bg-slate-50 text-slate-600 text-[10px] font-black uppercase tracking-widest hover:bg-slate-100 transition-all border border-slate-100"
               >
                 Manage Billing
@@ -143,13 +165,11 @@ export default function Workspace() {
             </div>
           </aside>
 
-          {/* MAIN CONTENT AREA */}
           <div className="lg:col-span-3 space-y-6">
             {!hasSubscription ? (
               <PaywallOverlay />
             ) : (
               <>
-                {/* Search Header (Hidden in Analytics) */}
                 {activeTab !== "analytics" && (
                   <div className="flex gap-4">
                     <div className="relative flex-1">
@@ -168,13 +188,49 @@ export default function Workspace() {
                   </div>
                 )}
 
-                {/* DYNAMIC CONTENT VIEWS */}
                 <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
                   {activeTab === "history" && (
-                    <HistoryView items={filteredHistory} />
+                    <div>
+                      {qrCodes.length === 0 ? (
+                        <div className="bg-white border-2 border-dashed border-slate-100 rounded-[3rem] p-20 text-center flex flex-col items-center">
+                          <div className="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center text-slate-300 mb-6">
+                            <LayoutGrid size={40} />
+                          </div>
+                          <h3 className="text-xl font-black text-slate-900 mb-2">
+                            No QR Codes Yet
+                          </h3>
+                          <p className="text-slate-500 text-sm max-w-xs mx-auto mb-8 font-medium">
+                            This workspace is empty. Create your first branded
+                            QR code to start tracking engagements.
+                          </p>
+                          <Link
+                            href="/workspace/generate"
+                            className="bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all inline-flex items-center gap-2"
+                          >
+                            <Plus size={18} /> Create First QR
+                          </Link>
+                        </div>
+                      ) : (
+                        <HistoryView items={filteredHistory} />
+                      )}
+                    </div>
                   )}
-                  {activeTab === "folders" && <FoldersView items={folders} />}
-                  {activeTab === "analytics" && <AnalyticsView />}
+                  {activeTab === "folders" && (
+                    <div>
+                      {processedFolders.length === 0 ? (
+                        <div className="bg-white border-2 border-dashed border-slate-100 rounded-[3rem] p-20 text-center">
+                          <p className="text-slate-400 font-bold uppercase text-xs tracking-widest">
+                            No folders created yet
+                          </p>
+                        </div>
+                      ) : (
+                        <FoldersView items={processedFolders} />
+                      )}
+                    </div>
+                  )}
+                  {activeTab === "analytics" && (
+                    <AnalyticsView qrCodes={qrCodes} loading={loading} />
+                  )}
                 </div>
               </>
             )}
@@ -184,139 +240,6 @@ export default function Workspace() {
     </div>
   );
 }
-
-function HistoryView({ items }: { items: any[] }) {
-  return (
-    <div className="bg-white rounded-[2.5rem] border border-slate-100 overflow-hidden shadow-sm">
-      <table className="w-full text-left">
-        <thead className="bg-slate-50 border-b border-slate-100">
-          <tr>
-            <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">
-              QR Name
-            </th>
-            <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">
-              Destination
-            </th>
-            <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400 text-right">
-              Engagement
-            </th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-slate-50">
-          {items.map((qr) => (
-            <tr
-              key={qr.id}
-              className="hover:bg-slate-50/50 transition-colors group"
-            >
-              <td className="px-8 py-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center shrink-0">
-                    <QrCode size={18} />
-                  </div>
-                  <div>
-                    <p className="font-bold text-slate-800 leading-tight">
-                      {qr.name}
-                    </p>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase mt-0.5">
-                      {qr.type} • {qr.date}
-                    </p>
-                  </div>
-                </div>
-              </td>
-              <td className="px-8 py-6">
-                <div className="flex items-center gap-2 text-slate-500 text-sm font-medium truncate max-w-[200px]">
-                  <ExternalLink size={14} className="shrink-0" />
-                  {qr.url}
-                </div>
-              </td>
-              <td className="px-8 py-6 text-right">
-                <span className="bg-slate-900 text-white text-[10px] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest">
-                  {qr.scans.toLocaleString()} Scans
-                </span>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function FoldersView({ items }: { items: any[] }) {
-  return (
-    <div className="grid md:grid-cols-2 gap-6">
-      {items.map((folder) => (
-        <div
-          key={folder.id}
-          className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl hover:border-emerald-100 transition-all cursor-pointer group"
-        >
-          <div className="flex justify-between items-start mb-6">
-            <div className="bg-emerald-50 p-4 rounded-2xl text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
-              <FolderRoot size={24} />
-            </div>
-            <button className="text-slate-300 hover:text-slate-900">
-              <MoreVertical size={20} />
-            </button>
-          </div>
-          <h3 className="text-xl font-black text-slate-800 uppercase mb-1">
-            {folder.name}
-          </h3>
-          <p className="text-sm font-bold text-slate-400 mb-6">
-            {folder.count} QR Codes
-          </p>
-          <div className="pt-6 border-t border-slate-50 flex items-center justify-between">
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-              Created {folder.date}
-            </span>
-            <div className="flex -space-x-2">
-              {[1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className="w-6 h-6 rounded-full bg-slate-200 border-2 border-white"
-                ></div>
-              ))}
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function AnalyticsView() {
-  return (
-    <div className="space-y-6">
-      <div className="grid md:grid-cols-3 gap-6">
-        <StatsCard
-          icon={<TrendingUp />}
-          label="Total Scans"
-          value="24.8k"
-          color="emerald"
-        />
-        <StatsCard
-          icon={<Users />}
-          label="Unique Visitors"
-          value="12.2k"
-          color="slate"
-        />
-        <StatsCard
-          icon={<MousePointer2 />}
-          label="Avg. CTR"
-          value="18.4%"
-          color="slate"
-        />
-      </div>
-      <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 h-64 flex items-center justify-center flex-col text-slate-300">
-        <BarChart3 size={48} className="mb-4 opacity-10" />
-        <p className="font-black uppercase tracking-widest text-xs">
-          Engagement Chart coming soon
-        </p>
-      </div>
-    </div>
-  );
-}
-
-// --- SHARED UI COMPONENTS ---
 
 function SidebarItem({ icon, label, active, onClick }: any) {
   return (
@@ -333,35 +256,13 @@ function SidebarItem({ icon, label, active, onClick }: any) {
   );
 }
 
-function StatsCard({ icon, label, value, color }: any) {
-  return (
-    <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
-      <div
-        className={`${
-          color === "emerald" ? "text-emerald-500" : "text-slate-400"
-        } mb-4`}
-      >
-        {icon}
-      </div>
-      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
-        {label}
-      </p>
-      <p className="text-3xl font-black text-slate-800 tracking-tighter uppercase">
-        {value}
-      </p>
-    </div>
-  );
-}
-
 function PaywallOverlay() {
   return (
     <div className="bg-slate-900 text-white p-12 rounded-[3rem] shadow-2xl text-center border border-emerald-500/30">
       <div className="bg-emerald-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
         <Lock size={28} />
       </div>
-      <h3 className="text-2xl font-black uppercase mb-3">
-        Workspace Locked
-      </h3>
+      <h3 className="text-2xl font-black uppercase mb-3">Workspace Locked</h3>
       <p className="text-slate-400 text-sm mb-8 max-w-sm mx-auto">
         Access scan history, folders, and pro analytics with an active
         subscription.

@@ -3,15 +3,28 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
-import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  onSnapshot,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { useRouter, usePathname } from "next/navigation";
 import { auth, db } from "@/db/firebase";
 import Loading from "@/app/loading";
+import { Profile } from "@/types/user";
+import { Team } from "@/types/team";
+import { toast } from "sonner";
 
 interface AuthContextType {
   user: User | null;
-  profile: any | null;
-  workspace: any | null;
+  profile: Profile | null;
+  workspace: Team | null;
+  allWorkspaces: Team[];
+  setActiveWorkspace: (id: string) => Promise<void>;
   loading: boolean;
 }
 
@@ -19,21 +32,39 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   profile: null,
   workspace: null,
+  allWorkspaces: [],
+  setActiveWorkspace: async () => {},
   loading: true,
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<any>(null);
-  const [workspace, setWorkspace] = useState<any>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [workspace, setWorkspace] = useState<Team | null>(null);
+  const [allWorkspaces, setAllWorkspaces] = useState<Team[]>([]);
   const [loading, setLoading] = useState(true);
 
   const router = useRouter();
   const pathname = usePathname();
 
+  const setActiveWorkspace = async (id: string) => {
+    if (!user) return;
+    try {
+      const wsRef = doc(db, "workspaces", id);
+      const snap = await getDoc(wsRef);
+      if (snap.exists()) {
+        await updateDoc(doc(db, "profiles", user.uid), {
+          defaultWorkspaceId: id,
+        });
+      }
+      window.location.reload();
+    } catch (error: any) {
+      toast.error(error?.message ?? "Error switching workspace!");
+    }
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      setLoading(true);
       if (firebaseUser) {
         setUser(firebaseUser);
 
@@ -41,19 +72,42 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const profileSnap = await getDoc(profileRef);
 
         if (profileSnap.exists()) {
-          const profileData = profileSnap.data();
+          const profileData = profileSnap.data() as Profile;
           setProfile(profileData);
 
+          const q = query(
+            collection(db, "workspaces"),
+            where("members", "array-contains", firebaseUser.uid)
+          );
+
+          const unsubWorkspaces = onSnapshot(q, (snapshot) => {
+            const ws = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            })) as Team[];
+            setAllWorkspaces(ws);
+          });
+
           const wsRef = doc(db, "workspaces", profileData.defaultWorkspaceId);
-          onSnapshot(wsRef, (doc) => {
-            setWorkspace(doc.data());
+          const unsubActiveWs = onSnapshot(wsRef, (docSnap) => {
+            if (docSnap.exists()) {
+              setWorkspace({ id: docSnap.id, ...docSnap.data() } as Team);
+            }
             setLoading(false);
           });
+
+          return () => {
+            unsubWorkspaces();
+            unsubActiveWs();
+          };
+        } else {
+          setLoading(false);
         }
       } else {
         setUser(null);
         setProfile(null);
         setWorkspace(null);
+        setAllWorkspaces([]);
         setLoading(false);
 
         if (pathname.startsWith("/workspace")) {
@@ -66,8 +120,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [pathname, router]);
 
   return (
-    <AuthContext.Provider value={{ user, profile, workspace, loading }}>
-      {loading ? <Loading /> : children}
+    <AuthContext.Provider
+      value={{
+        user,
+        profile,
+        workspace,
+        allWorkspaces,
+        setActiveWorkspace,
+        loading,
+      }}
+    >
+      {!loading ? children : <Loading />}
     </AuthContext.Provider>
   );
 };

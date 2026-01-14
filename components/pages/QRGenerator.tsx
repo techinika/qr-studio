@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useState, useRef } from "react";
@@ -18,12 +19,17 @@ import Footer from "../parts/Footer";
 import Nav from "../parts/Nav";
 import Link from "next/link";
 import AdBanner from "../parts/AdBanner";
+import { saveGeneratedQRCode } from "@/db/functions/QRServices";
+import { useAuth } from "@/lib/AuthContext";
+import { toast } from "sonner";
 
 export default function QRGenerator() {
+  const { user, workspace } = useAuth();
   const [url, setUrl] = useState("https://ubunifu.techinika.co.rw");
   const [fgColor, setFgColor] = useState("#10b981");
   const [bgColor, setBgColor] = useState("#ffffff");
   const [logo, setLogo] = useState<string | undefined>(undefined);
+  const [isSaving, setIsSaving] = useState(false);
 
   const qrRef = useRef<HTMLDivElement>(null);
 
@@ -36,16 +42,45 @@ export default function QRGenerator() {
     }
   };
 
-  const downloadQR = () => {
-    const canvas = qrRef.current?.querySelector("canvas");
-    if (canvas) {
-      const pngUrl = canvas.toDataURL("image/png");
-      const downloadLink = document.createElement("a");
-      downloadLink.href = pngUrl;
-      downloadLink.download = `qr-studio-${Date.now()}.png`;
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
+  const getTrackableUrl = (baseUrl: string, hash: string) => {
+    return `${baseUrl}#qr_studio_${hash}`;
+  };
+
+  const downloadQR = async () => {
+    setIsSaving(true);
+
+    const uniqueHash = Math.random().toString(36).substring(2, 10) + Date.now();
+    const finalUrl = getTrackableUrl(url, uniqueHash);
+
+    try {
+      await saveGeneratedQRCode(
+        {
+          name: `QR_Code_${Date.now()}`,
+          originalUrl: url,
+          hashedUrl: finalUrl,
+          hash: uniqueHash,
+          workspaceId: workspace?.id ?? undefined,
+          fgColor,
+          bgColor,
+          logo: logo ? "custom_logo_included" : "none",
+        },
+        user?.uid || null
+      );
+
+      const canvas = qrRef.current?.querySelector("canvas");
+      if (canvas) {
+        const pngUrl = canvas.toDataURL("image/png");
+        const downloadLink = document.createElement("a");
+        downloadLink.href = pngUrl;
+        downloadLink.download = `qr_studio_${Date.now()}.png`;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+      }
+    } catch (err: any) {
+      toast.error(err?.message ?? "Failed to save QR metadata");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -232,7 +267,7 @@ export default function QRGenerator() {
                   className="p-6 rounded-4xl bg-white shadow-[0_0_50px_rgba(16,185,129,0.2)]"
                 >
                   <QRCodeCanvas
-                    value={url || " "}
+                    value={getTrackableUrl(url || " ", "preview")}
                     size={220}
                     fgColor={fgColor}
                     bgColor={bgColor}
@@ -253,17 +288,16 @@ export default function QRGenerator() {
 
                 <button
                   onClick={downloadQR}
-                  className="w-full mt-10 flex items-center justify-center gap-3 bg-emerald-500 hover:bg-emerald-400 text-white py-5 rounded-[1.5rem] font-black text-lg transition-all shadow-xl shadow-emerald-500/20 active:scale-95"
+                  className="w-full mt-10 flex items-center justify-center gap-3 bg-emerald-500 hover:bg-emerald-400 text-white py-5 rounded-3xl font-black text-lg transition-all shadow-xl shadow-emerald-500/20 active:scale-95"
                 >
                   <Download size={22} />
-                  DOWNLOAD PNG
+                  {isSaving ? "SAVING..." : "DOWNLOAD PNG"}
                 </button>
                 <p className="mt-4 text-slate-500 text-xs font-medium uppercase tracking-widest">
                   High Resolution Export
                 </p>
               </div>
 
-              {/* Extra Tip Card */}
               <div className="bg-emerald-500/5 border border-emerald-500/20 p-6 rounded-4xl">
                 <div className="flex gap-3 items-start">
                   <Layers className="text-emerald-500 shrink-0" size={20} />

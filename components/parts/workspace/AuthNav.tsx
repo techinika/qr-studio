@@ -5,50 +5,47 @@ import {
   ChevronDown,
   LogOut,
   Settings,
-  CreditCard,
   User,
   Plus,
   Check,
-  Users,
   Building2,
+  Users,
+  CreditCard,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/AuthContext";
+import { auth } from "@/db/firebase";
+import CreateTeamModal from "./CreateTeamModal";
 
 export default function WorkspaceNav() {
-  const { user } = useAuth();
+  const { profile, workspace, allWorkspaces, setActiveWorkspace } = useAuth();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isTeamMenuOpen, setIsTeamMenuOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const router = useRouter();
 
-  const [currentTeam, setCurrentTeam] = useState({
-    id: 1,
-    name: "Personal Workspace",
-    type: "Personal",
-  });
-  const teams = [
-    { id: 1, name: "Personal Workspace", type: "Personal" },
-    { id: 2, name: "Ubunifu Labs", type: "Team" },
-    { id: 3, name: "Techinika Marketing", type: "Team" },
-  ];
+  const handleSignOut = () => {
+    auth.signOut().then(() => router.push("/login"));
+  };
 
   return (
     <nav className="bg-white border-b border-slate-100 h-16 sticky top-0 z-[60] px-6">
-      <div className="max-w-400 mx-auto h-full flex items-center justify-between">
-        {/* LEFT: TEAM SWITCHER */}
+      <div className="max-w-7xl mx-auto h-full flex items-center justify-between">
         <div className="relative">
           <button
             onClick={() => setIsTeamMenuOpen(!isTeamMenuOpen)}
             className="flex items-center gap-3 hover:bg-slate-50 p-2 rounded-xl transition-all border border-transparent hover:border-slate-100"
           >
-            <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center text-white font-black text-xs shadow-lg shadow-emerald-200">
-              {currentTeam.name.charAt(0)}
+            <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center text-white font-black text-xs shadow-lg shadow-emerald-200 uppercase">
+              {workspace?.name?.charAt(0) || "W"}
             </div>
             <div className="text-left hidden md:block">
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">
                 Workspace
               </p>
               <p className="text-sm font-bold text-slate-800 leading-none flex items-center gap-1">
-                {currentTeam.name}{" "}
+                {workspace?.name || "Loading..."}
                 <ChevronDown size={14} className="text-slate-400" />
               </p>
             </div>
@@ -59,24 +56,25 @@ export default function WorkspaceNav() {
               <p className="px-3 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
                 Switch Team
               </p>
-              {teams.map((team) => (
+
+              {allWorkspaces.map((team) => (
                 <button
-                  key={team.id}
+                  key={team?.id}
                   onClick={() => {
-                    setCurrentTeam(team);
+                    setActiveWorkspace(team.id);
                     setIsTeamMenuOpen(false);
                   }}
                   className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-emerald-50 group transition-all"
                 >
                   <div className="flex items-center gap-3">
-                    {team.type === "Personal" ? (
+                    {team.type === "personal" ? (
                       <User size={16} className="text-slate-400" />
                     ) : (
                       <Building2 size={16} className="text-slate-400" />
                     )}
                     <span
                       className={`text-sm font-bold ${
-                        currentTeam.id === team.id
+                        workspace?.id === team.id
                           ? "text-emerald-600"
                           : "text-slate-600"
                       }`}
@@ -84,13 +82,20 @@ export default function WorkspaceNav() {
                       {team.name}
                     </span>
                   </div>
-                  {currentTeam.id === team.id && (
+                  {workspace?.id === team.id && (
                     <Check size={16} className="text-emerald-500" />
                   )}
                 </button>
               ))}
-              <div className="h-[1px] bg-slate-50 my-2" />
-              <button className="w-full flex items-center gap-3 p-3 rounded-xl text-emerald-600 hover:bg-emerald-50 transition-all">
+
+              <div className="h-px bg-slate-50 my-2" />
+              <button
+                onClick={() => {
+                  setIsTeamMenuOpen(false);
+                  setIsCreateModalOpen(true);
+                }}
+                className="w-full flex items-center gap-3 p-3 rounded-xl text-emerald-600 hover:bg-emerald-50 transition-all"
+              >
                 <Plus size={16} />
                 <span className="text-sm font-bold">Create New Team</span>
               </button>
@@ -98,7 +103,6 @@ export default function WorkspaceNav() {
           )}
         </div>
 
-        {/* RIGHT: USER PROFILE */}
         <div className="relative">
           <button
             onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
@@ -106,16 +110,16 @@ export default function WorkspaceNav() {
           >
             <div className="text-right hidden md:block">
               <p className="text-sm font-black text-slate-800 leading-none">
-                {user?.displayName}
+                {profile?.name}
               </p>
               <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mt-1">
-                Pro Member
+                {"Member"}
               </p>
             </div>
             <div className="w-10 h-10 rounded-full border-2 border-white shadow-md group-hover:border-emerald-500 transition-all overflow-hidden bg-slate-200">
               <img
-                src={user?.photoURL ?? "/qr-studio.png"}
-                alt="User Profile"
+                src={profile?.profilePicture || "/qr-studio.png"}
+                alt="User"
               />
             </div>
           </button>
@@ -128,21 +132,25 @@ export default function WorkspaceNav() {
               >
                 <Settings size={18} /> Profile Settings
               </Link>
+
               <Link
                 href="/workspace/profile/billing"
                 className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-bold text-sm transition-all"
               >
                 <CreditCard size={18} /> Billing & Plans
               </Link>
+
               <Link
                 href="/workspace/team"
                 className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-bold text-sm transition-all"
               >
                 <Users size={18} /> Team Management
               </Link>
+
               <div className="h-px bg-slate-50 my-2" />
+
               <button
-                onClick={() => console.log("Logging out...")}
+                onClick={handleSignOut}
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-red-50 text-red-500 font-bold text-sm transition-all"
               >
                 <LogOut size={18} /> Log Out
@@ -151,6 +159,10 @@ export default function WorkspaceNav() {
           )}
         </div>
       </div>
+      <CreateTeamModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
     </nav>
   );
 }

@@ -13,8 +13,11 @@ import {
   Trash2,
   Lock,
 } from "lucide-react";
+import { useAuth } from "@/lib/AuthContext";
+import { formatMonthYear } from "../../../lib/main";
 
 export default function ProfileSettings() {
+  const { user, profile } = useAuth();
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSave = () => {
@@ -25,14 +28,13 @@ export default function ProfileSettings() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col">
       <main className="grow max-w-4xl mx-auto w-full px-6 py-12">
-        {/* PROFILE HEADER */}
         <div className="flex flex-col md:flex-row items-center gap-8 mb-12 bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full -mr-16 -mt-16" />
 
           <div className="relative group">
             <div className="w-32 h-32 rounded-full border-4 border-slate-50 shadow-xl overflow-hidden bg-slate-100">
               <img
-                src="https://api.dicebear.com/7.x/avataaars/svg?seed=John"
+                src={profile?.profilePicture ?? "/qr-studio.png"}
                 alt="Avatar"
                 className="w-full h-full object-cover"
               />
@@ -44,10 +46,10 @@ export default function ProfileSettings() {
 
           <div className="text-center md:text-left grow">
             <h1 className="text-3xl font-black text-slate-900 uppercase tracking-tighter">
-              John <span className="text-emerald-500">Doe</span>
+              {profile?.name}
             </h1>
             <p className="text-slate-400 font-bold text-sm uppercase tracking-widest mt-1">
-              Pro Member since Jan 2024
+              Pro Member since {formatMonthYear(profile?.createdAt)}
             </p>
             <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-4">
               <span className="px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-black rounded-full uppercase">
@@ -73,7 +75,6 @@ export default function ProfileSettings() {
         </div>
 
         <div className="grid gap-8">
-          {/* SECTION 1: PERSONAL INFO */}
           <SettingsSection
             icon={<User size={20} className="text-emerald-500" />}
             title="Personal Details"
@@ -91,7 +92,7 @@ export default function ProfileSettings() {
                   />
                   <input
                     type="text"
-                    defaultValue="John Doe"
+                    defaultValue={profile?.name}
                     className="w-full pl-12 pr-4 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-emerald-500 outline-none font-bold text-slate-700 transition-all"
                   />
                 </div>
@@ -107,7 +108,7 @@ export default function ProfileSettings() {
                   />
                   <input
                     type="email"
-                    defaultValue="john@example.com"
+                    defaultValue={user?.email ?? undefined}
                     disabled
                     className="w-full pl-12 pr-4 py-4 rounded-2xl bg-slate-100 border border-slate-100 text-slate-400 font-bold cursor-not-allowed"
                   />
@@ -225,9 +226,7 @@ function SettingsSection({
       <div className="flex items-center gap-4">
         <div className="bg-slate-50 p-3 rounded-2xl">{icon}</div>
         <div>
-          <h3 className="font-black uppercase text-slate-800">
-            {title}
-          </h3>
+          <h3 className="font-black uppercase text-slate-800">{title}</h3>
           <p className="text-xs text-slate-400 font-medium">{desc}</p>
         </div>
       </div>

@@ -22,12 +22,16 @@ import Footer from "../parts/Footer";
 import Nav from "../parts/Nav";
 import AdBanner from "../parts/AdBanner";
 import Link from "next/link";
+import { identifyAndRecordScan } from "@/db/functions/QRServices";
+import { useAuth } from "@/lib/AuthContext";
 
 export default function QRScannerHome() {
-  const [scanResult, setScanResult] = useState<string | null>(null);
+  const { user } = useAuth();
+  const [scanResult, setScanResult] = useState<string>("");
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const scannerId = "qr-reader";
@@ -44,8 +48,21 @@ export default function QRScannerHome() {
     }
   };
 
+  async function onScanSuccess() {
+    if (isProcessing) return;
+
+    setIsProcessing(true);
+    try {
+      await identifyAndRecordScan(scanResult, user?.uid || null);
+    } catch (err) {
+      console.error("Tracking failed:", err);
+    } finally {
+      setIsProcessing(false);
+    }
+  }
+
   const startScanner = async () => {
-    setScanResult(null);
+    setScanResult("");
     setError(null);
     setIsCameraActive(true);
 
@@ -59,6 +76,7 @@ export default function QRScannerHome() {
           { fps: 20, qrbox: { width: 280, height: 280 } },
           (decodedText) => {
             setScanResult(decodedText);
+            onScanSuccess();
             stopCamera();
           },
           undefined
@@ -83,7 +101,7 @@ export default function QRScannerHome() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setScanResult(null);
+    setScanResult("");
     setError(null);
 
     const scanner = getScanner();
@@ -92,6 +110,7 @@ export default function QRScannerHome() {
     try {
       const result = await scanner.scanFile(file, true);
       setScanResult(result);
+      onScanSuccess();
     } catch (err) {
       setError("No QR code found in this image. Try a clearer photo.");
     }
