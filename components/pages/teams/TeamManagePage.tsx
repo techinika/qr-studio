@@ -9,11 +9,12 @@ import {
   Check,
   Building2,
 } from "lucide-react";
+import { useAuth } from "@/lib/AuthContext";
 
 export default function TeamManagement() {
+  const { workspace } = useAuth();
   const [showInviteModal, setShowInviteModal] = useState(false);
 
-  // Mock Data
   const members = [
     {
       id: 1,
@@ -41,11 +42,10 @@ export default function TeamManagement() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col">
       <main className="grow max-w-6xl mx-auto w-full px-6 py-12">
-        {/* HEADER SECTION */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div>
             <div className="flex items-center gap-3 mb-2 text-emerald-500 font-black uppercase text-[10px] tracking-[0.2em]">
-              <Building2 size={16} /> Ubunifu Labs Workspace
+              <Building2 size={16} /> {workspace?.name}
             </div>
             <h1 className="text-4xl font-black text-slate-900 uppercase tracking-tighter">
               Team <span className="text-emerald-500">Management</span>
@@ -63,14 +63,12 @@ export default function TeamManagement() {
           </button>
         </div>
 
-        {/* TEAM STATS */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
           <StatCard label="Total Members" value="03" />
           <StatCard label="Active Invites" value="00" />
           <StatCard label="Remaining Seats" value="02" />
         </div>
 
-        {/* MEMBERS LIST */}
         <div className="bg-white rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden">
           <div className="p-8 border-b border-slate-50 bg-slate-50/50 flex items-center justify-between">
             <h3 className="font-black uppercase text-slate-800 text-sm">
@@ -129,7 +127,6 @@ export default function TeamManagement() {
         </div>
       </main>
 
-      {/* INVITE MODAL OVERLAY */}
       {showInviteModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
           <div
@@ -200,7 +197,6 @@ export default function TeamManagement() {
   );
 }
 
-// Sub-components
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
     <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
