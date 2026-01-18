@@ -2,9 +2,17 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Users, Send, Loader2 } from "lucide-react";
+import { X, Users, Send, Loader2, AlertCircle } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
 import { toast } from "sonner";
+import { db } from "@/db/firebase";
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  writeBatch,
+  doc,
+} from "firebase/firestore";
 import { createNewTeam } from "@/db/functions/teamService";
 
 export default function CreateTeamModal({
@@ -25,23 +33,67 @@ export default function CreateTeamModal({
     e.preventDefault();
     if (!teamName || !user) return;
 
+    // 1. Process and validate email list
+    const inviteList = emails
+      .split(",")
+      .map((email) => email.trim().toLowerCase())
+      .filter((email) => email !== "" && email !== user.email);
+
+    if (inviteList.length > 5) {
+      return toast.error("You can only invite up to 5 members at once.");
+    }
+
     setLoading(true);
     try {
-      const inviteList = emails
-        .split(",")
-        .map((email) => email.trim())
-        .filter((email) => email !== "");
+      // 2. Create the Workspace (using your existing function)
+      // Assuming createNewTeam returns the new workspace ID
+      const newWorkspaceId = await createNewTeam(
+        teamName,
+        user.uid,
+        inviteList,
+      );
 
-      const newId = await createNewTeam(teamName, user.uid, inviteList);
+      // 3. Update workspaceMembers collection using a Batch for efficiency
+      const batch = writeBatch(db);
 
-      await setActiveWorkspace(newId);
+      // Add the Owner (the current user)
+      const ownerRef = doc(collection(db, "workspaceMembers"));
+      batch.set(ownerRef, {
+        workspaceId: newWorkspaceId,
+        workspaceName: teamName,
+        email: user.email,
+        uid: user.uid,
+        role: "Owner",
+        status: "active",
+        createdAt: serverTimestamp(),
+      });
+
+      // Add the invited members
+      inviteList.forEach((email) => {
+        const memberRef = doc(collection(db, "workspaceMembers"));
+        batch.set(memberRef, {
+          workspaceId: newWorkspaceId,
+          workspaceName: teamName,
+          email: email,
+          role: "Member", // Default role
+          status: "pending",
+          invitedBy: user.email,
+          createdAt: serverTimestamp(),
+        });
+      });
+
+      await batch.commit();
+
+      // 4. Switch to the new workspace
+      await setActiveWorkspace(newWorkspaceId);
 
       onClose();
       setTeamName("");
       setEmails("");
-      toast.success("New Team Created Successfully!");
+      toast.success("Workspace and Invitations Created!");
     } catch (error: any) {
-      toast.error(error?.message ?? "Failed to create team");
+      console.error(error);
+      toast.error(error?.message ?? "Failed to create team and members");
     } finally {
       setLoading(false);
     }
@@ -63,49 +115,64 @@ export default function CreateTeamModal({
             </button>
           </div>
 
-          <h2 className="text-2xl font-black text-slate-900 mb-2">
-            Create New Team
+          <h2 className="text-2xl font-black text-slate-900 mb-2 uppercase tracking-tight">
+            New <span className="text-emerald-500">Universe</span>
           </h2>
           <p className="text-slate-500 text-sm mb-8 font-medium">
-            Build a shared workspace to manage QR codes with your colleagues.
+            Set up a collaborative workspace. Invite up to 5 teammates to get
+            started.
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 block">
-                Team Name
+              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 block ml-1">
+                Workspace Name
               </label>
               <input
                 required
                 type="text"
-                placeholder="e.g. Marketing Dept"
+                placeholder="Marketing Team, Design Hub..."
                 value={teamName}
                 onChange={(e) => setTeamName(e.target.value)}
-                className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-bold"
+                className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-emerald-500 outline-none transition-all font-bold text-slate-700"
               />
             </div>
 
             <div>
-              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 block">
-                Invite Members (Emails, comma separated)
-              </label>
+              <div className="flex justify-between items-center mb-2 ml-1">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                  Invite Teammates
+                </label>
+                <span
+                  className={`text-[9px] font-black uppercase tracking-widest ${emails.split(",").filter((e) => e.trim()).length > 5 ? "text-red-500" : "text-slate-300"}`}
+                >
+                  {emails.split(",").filter((e) => e.trim()).length} / 5 Seats
+                </span>
+              </div>
               <textarea
-                placeholder="alex@company.com, sam@company.com"
+                placeholder="email1@company.com, email2@company.com"
                 value={emails}
                 onChange={(e) => setEmails(e.target.value)}
-                className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-medium h-24 resize-none"
+                className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-emerald-500 outline-none transition-all font-medium h-28 resize-none text-slate-600"
               />
+              <div className="flex items-start gap-2 mt-2 ml-1 text-slate-400">
+                <AlertCircle size={12} className="mt-0.5 shrink-0" />
+                <p className="text-[9px] font-bold leading-relaxed uppercase tracking-tighter">
+                  Separate emails with commas. Invited members will receive a
+                  &quot;Pending&ldquo; status until they join.
+                </p>
+              </div>
             </div>
 
             <button
               disabled={loading}
-              className="w-full bg-emerald-500 hover:bg-emerald-400 text-white py-5 rounded-2xl font-black uppercase tracking-widest text-xs transition-all shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-3 disabled:opacity-50"
+              className="w-full bg-slate-900 hover:bg-emerald-600 text-white py-5 rounded-3xl font-black uppercase tracking-widest text-xs transition-all shadow-xl shadow-slate-200 flex items-center justify-center gap-3 disabled:opacity-50 active:scale-95"
             >
               {loading ? (
                 <Loader2 className="animate-spin" size={18} />
               ) : (
                 <>
-                  <Send size={18} /> Create & Invite
+                  <Send size={18} /> Launch Workspace
                 </>
               )}
             </button>

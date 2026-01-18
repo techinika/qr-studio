@@ -51,12 +51,12 @@ export default function Workspace() {
       const q = query(
         collection(db, "qrcodes"),
         where("workspaceId", "==", workspace.id),
-        orderBy("createdAt", "desc")
+        orderBy("createdAt", "desc"),
       );
 
       const folderQuery = query(
-        collection(db, "QRFolders"),
-        where("workspaceId", "==", workspace.id)
+        collection(db, "folders"),
+        where("workspaceId", "==", workspace.id),
       );
 
       const unsubFolders = onSnapshot(folderQuery, (snap) => {
@@ -87,7 +87,7 @@ export default function Workspace() {
 
   const filteredHistory = useMemo(() => {
     return qrCodes.filter((item) =>
-      item.name.toLowerCase().includes(searchQuery.toLowerCase())
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
   }, [qrCodes, searchQuery]);
 

@@ -1,10 +1,10 @@
-import Workspace from "@/components/pages/workspace/MainPage";
+import EditQRPage from "@/components/pages/view/IndividualView";
 import React from "react";
 
 function page() {
   return (
     <div>
-      <Workspace />
+      <EditQRPage />
     </div>
   );
 }

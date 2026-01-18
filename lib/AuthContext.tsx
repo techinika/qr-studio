@@ -23,7 +23,7 @@ interface AuthContextType {
   user: User | null;
   profile: Profile | null;
   workspace: Team | null;
-  allWorkspaces: Team[];
+  allWorkspaces: any[]; // Updated to any to include 'status'
   setActiveWorkspace: (id: string) => Promise<void>;
   loading: boolean;
 }
@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [workspace, setWorkspace] = useState<Team | null>(null);
-  const [allWorkspaces, setAllWorkspaces] = useState<Team[]>([]);
+  const [allWorkspaces, setAllWorkspaces] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const router = useRouter();
@@ -56,8 +56,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         await updateDoc(doc(db, "profiles", user.uid), {
           defaultWorkspaceId: id,
         });
+        window.location.reload();
       }
-      window.location.reload();
     } catch (error: any) {
       toast.error(error?.message ?? "Error switching workspace!");
     }
@@ -76,15 +76,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setProfile(profileData);
 
           const q = query(
-            collection(db, "workspaces"),
-            where("members", "array-contains", firebaseUser.uid)
+            collection(db, "workspaceMembers"),
+            where("email", "==", firebaseUser.email),
           );
 
           const unsubWorkspaces = onSnapshot(q, (snapshot) => {
             const ws = snapshot.docs.map((doc) => ({
-              id: doc.id,
-              ...doc.data(),
-            })) as Team[];
+              id: doc.data().workspaceId,
+              name: doc.data().workspaceName || "Unnamed Team",
+              status: doc.data().status,
+              role: doc.data().role,
+            }));
             setAllWorkspaces(ws);
           });
 
@@ -109,10 +111,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setWorkspace(null);
         setAllWorkspaces([]);
         setLoading(false);
-
-        if (pathname.startsWith("/workspace")) {
-          router.push("/login");
-        }
+        if (pathname.startsWith("/workspace")) router.push("/login");
       }
     });
 
