@@ -65,25 +65,20 @@ export default function WorkspaceNav() {
       const membershipRef = doc(db, "workspaceMembers", membershipDocId);
 
       if (accept) {
-        // 1. Update status to active
         await updateDoc(membershipRef, {
           status: "active",
-          uid: user.uid, // Link their UID now that they've joined
+          uid: user.uid, 
         });
 
-        // 2. Add user UID to the main workspace members array
         const workspaceRef = doc(db, "workspaces", pendingInvite.id);
-        // Note: For simplicity, we are assuming security rules allow this or handle it via Cloud Function
-        // For now, we update the local active state
         await setActiveWorkspace(pendingInvite.id);
         toast.success(`Welcome to ${pendingInvite.name}!`);
       } else {
-        // Update status to rejected
         await updateDoc(membershipRef, { status: "rejected" });
         toast.info(`Invitation to ${pendingInvite.name} declined.`);
       }
     } catch (error: any) {
-      toast.error("Failed to process invitation.");
+      toast.error(error?.message ?? "Failed to process invitation.");
     } finally {
       setIsActionLoading(false);
       setPendingInvite(null);
