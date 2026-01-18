@@ -30,6 +30,9 @@ export default function QRGenerator() {
   const [bgColor, setBgColor] = useState("#ffffff");
   const [logo, setLogo] = useState<string | undefined>(undefined);
   const [isSaving, setIsSaving] = useState(false);
+  const [uniqueHash] = useState(
+    Math.random().toString(36).substring(2, 10) + Date.now(),
+  );
 
   const qrRef = useRef<HTMLDivElement>(null);
 
@@ -49,7 +52,6 @@ export default function QRGenerator() {
   const downloadQR = async () => {
     setIsSaving(true);
 
-    const uniqueHash = Math.random().toString(36).substring(2, 10) + Date.now();
     const finalUrl = getTrackableUrl(url, uniqueHash);
 
     try {
@@ -64,7 +66,7 @@ export default function QRGenerator() {
           bgColor,
           logo: logo ? "custom_logo_included" : "none",
         },
-        user?.uid || null
+        user?.uid || null,
       );
 
       const canvas = qrRef.current?.querySelector("canvas");
@@ -254,7 +256,6 @@ export default function QRGenerator() {
             </div>
           </div>
 
-          {/* PREVIEW STICKY (Right 1 Column) */}
           <div className="lg:col-span-1">
             <div className="sticky top-28 space-y-6">
               <div className="bg-slate-900 p-8 rounded-[2.5rem] shadow-2xl shadow-emerald-900/20 text-center flex flex-col items-center">
@@ -267,7 +268,7 @@ export default function QRGenerator() {
                   className="p-6 rounded-4xl bg-white shadow-[0_0_50px_rgba(16,185,129,0.2)]"
                 >
                   <QRCodeCanvas
-                    value={getTrackableUrl(url || " ", "preview")}
+                    value={getTrackableUrl(url || " ", uniqueHash)}
                     size={220}
                     fgColor={fgColor}
                     bgColor={bgColor}

@@ -1,10 +1,10 @@
-import Workspace from "@/components/pages/workspace/MainPage";
+import WaitlistPage from "@/components/pages/WaitlistInformant";
 import React from "react";
 
 function page() {
   return (
     <div>
-      <Workspace />
+      <WaitlistPage />
     </div>
   );
 }
