@@ -6,4 +6,8 @@ export interface Profile {
   createdAt: string;
   lastLogin: string;
   defaultWorkspaceId: string;
+  language: string;
+  timezone: string;
+  notificationsEnabled: boolean;
+  role: string;
 }

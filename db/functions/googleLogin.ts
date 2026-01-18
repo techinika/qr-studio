@@ -6,6 +6,8 @@ import {
   setDoc,
   updateDoc,
   serverTimestamp,
+  writeBatch,
+  collection,
 } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import { toast } from "sonner";
@@ -22,8 +24,9 @@ export const loginWithGoogle = async () => {
 
     if (!userSnap.exists()) {
       const workspaceId = `personal-${user.uid}`;
+      const batch = writeBatch(db);
 
-      await setDoc(userRef, {
+      batch.set(userRef, {
         uid: user.uid,
         name: user.displayName,
         email: user.email,
@@ -31,10 +34,13 @@ export const loginWithGoogle = async () => {
         createdAt: serverTimestamp(),
         lastLogin: serverTimestamp(),
         defaultWorkspaceId: workspaceId,
+        language: "English (US)",
+        timezone: "(GMT+02:00) Central Africa Time",
+        notificationsEnabled: true,
       });
 
       const workspaceRef = doc(db, "workspaces", workspaceId);
-      await setDoc(workspaceRef, {
+      batch.set(workspaceRef, {
         name: "Personal Workspace",
         ownerId: user.uid,
         members: [user.uid],
@@ -42,12 +48,24 @@ export const loginWithGoogle = async () => {
         createdAt: serverTimestamp(),
       });
 
+      const membershipRef = doc(collection(db, "workspaceMembers"));
+      batch.set(membershipRef, {
+        workspaceId: workspaceId,
+        workspaceName: "Personal Workspace",
+        email: user.email,
+        uid: user.uid,
+        role: "Owner",
+        status: "active",
+        createdAt: serverTimestamp(),
+      });
+
+      await batch.commit();
+
       toast.success("Account and Personal Workspace created!");
     } else {
       await updateDoc(userRef, {
         lastLogin: serverTimestamp(),
       });
-      console.log("Welcome back!");
     }
 
     return user;
