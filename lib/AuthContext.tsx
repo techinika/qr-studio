@@ -111,7 +111,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setWorkspace(null);
         setAllWorkspaces([]);
         setLoading(false);
-        if (pathname.startsWith("/workspace")) router.push("/login");
+        if (
+          pathname.startsWith("/workspace") ||
+          pathname.startsWith("/subscribe")
+        )
+          router.push("/login");
       }
     });
 

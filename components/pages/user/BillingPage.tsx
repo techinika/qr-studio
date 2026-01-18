@@ -1,23 +1,69 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   CreditCard,
   Receipt,
-  Zap,
-  CheckCircle2,
-  Plus,
-  Clock,
-  Download,
+  Loader2,
+  AlertCircle,
 } from "lucide-react";
+import { useAuth } from "@/lib/AuthContext";
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from "@/db/firebase";
 
 export default function BillingPage() {
-  // Mock Data
-  const invoices = [
-    { id: "INV-001", date: "Jan 12, 2026", amount: "$8.00", status: "Paid" },
-    { id: "INV-002", date: "Dec 12, 2025", amount: "$8.00", status: "Paid" },
-    { id: "INV-003", date: "Nov 12, 2025", amount: "$8.00", status: "Paid" },
-  ];
+  const { user } = useAuth();
+  const [subscription, setSubscription] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const unsub = onSnapshot(doc(db, "subscriptions", user.uid), (doc) => {
+      if (doc.exists()) {
+        setSubscription(doc.data());
+      }
+      setLoading(false);
+    });
+
+    return () => unsub();
+  }, [user]);
+
+  // 2. HANDLE CANCELLATION
+  const handleCancel = async () => {
+    if (!subscription?.subscriberId) return;
+
+    const confirm = window.confirm(
+      "Are you sure you want to cancel? You will lose Pro access.",
+    );
+    if (!confirm) return;
+
+    try {
+      const response = await fetch(
+        "https://api.taag.cc/v1/subscribers/unsubscribe",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: process.env.NEXT_PUBLIC_TAAG_SECRET_KEY!, // Usually done via backend for security
+          },
+          body: JSON.stringify({ subscriberId: subscription.subscriberId }),
+        },
+      );
+
+      if (response.ok) alert("Subscription cancelled successfully.");
+    } catch (error) {
+      console.error("Cancellation error", error);
+    }
+  };
+
+  if (loading)
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="animate-spin" />
+      </div>
+    );
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col">
@@ -32,144 +78,103 @@ export default function BillingPage() {
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* LEFT: CURRENT PLAN & CARDS (2 COLUMNS) */}
           <div className="lg:col-span-2 space-y-6">
-            {/* CURRENT PLAN HERO */}
-            <div className="bg-slate-900 rounded-[3rem] p-10 text-white relative overflow-hidden shadow-2xl shadow-emerald-900/20">
-              <div className="absolute top-0 right-0 p-8 opacity-10">
-                <Zap size={120} />
-              </div>
-
+            {/* DYNAMIC CURRENT PLAN HERO */}
+            <div
+              className={`${subscription?.status === "SUBSCRIBED" ? "bg-slate-900" : "bg-slate-200"} rounded-[3rem] p-10 text-white relative overflow-hidden shadow-2xl`}
+            >
               <div className="relative z-10">
                 <div className="flex justify-between items-start mb-10">
                   <div>
-                    <span className="bg-emerald-500 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-[0.2em] mb-4 inline-block">
-                      Active Plan
+                    <span
+                      className={`${subscription?.status === "SUBSCRIBED" ? "bg-emerald-500" : "bg-slate-400"} text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-[0.2em] mb-4 inline-block`}
+                    >
+                      {subscription?.status || "Free Plan"}
                     </span>
-                    <h2 className="text-4xl font-black uppercase tracking-tighter">
-                      Pro{" "}
-                      <span className="text-emerald-400 font-normal">
-                        Monthly
-                      </span>
+                    <h2
+                      className={`text-4xl font-black uppercase tracking-tighter ${subscription?.status !== "SUBSCRIBED" && "text-slate-600"}`}
+                    >
+                      {subscription?.planName || "Free Tier"}
                     </h2>
                   </div>
-                  <div className="text-right">
-                    <p className="text-3xl font-black text-emerald-400">
-                      $8.00
-                    </p>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase">
-                      Per Month
-                    </p>
+                  {subscription?.status === "SUBSCRIBED" && (
+                    <div className="text-right">
+                      <p className="text-[10px] font-bold text-slate-400 uppercase">
+                        Renews On
+                      </p>
+                      <p className="text-xl font-black text-emerald-400">
+                        {subscription.expiresAt?.toDate().toLocaleDateString()}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {subscription?.status === "SUBSCRIBED" ? (
+                  <div className="flex gap-4">
+                    <button
+                      onClick={() => (window.location.href = "/subscribe")}
+                      className="bg-white text-slate-900 px-6 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-emerald-400 hover:text-white transition-all"
+                    >
+                      Change Plan
+                    </button>
+                    <button
+                      onClick={handleCancel}
+                      className="bg-white/10 text-white px-6 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-red-500 transition-all border border-white/10"
+                    >
+                      Cancel Plan
+                    </button>
                   </div>
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-4 mb-10">
-                  <PlanFeature text="Unlimited Dynamic QRs" />
-                  <PlanFeature text="Advanced Analytics" />
-                  <PlanFeature text="Bulk Generation" />
-                  <PlanFeature text="Team Collaboration" />
-                </div>
-
-                <div className="flex gap-4">
-                  <button className="bg-white text-slate-900 px-6 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-emerald-400 hover:text-white transition-all">
-                    Upgrade to Yearly
+                ) : (
+                  <button
+                    onClick={() => (window.location.href = "/subscribe")}
+                    className="bg-emerald-500 text-white px-8 py-4 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-emerald-600 transition-all"
+                  >
+                    Upgrade to Pro
                   </button>
-                  <button className="bg-white/10 text-white px-6 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-red-500 transition-all border border-white/10">
-                    Cancel Plan
-                  </button>
-                </div>
+                )}
               </div>
             </div>
 
-            {/* PAYMENT METHOD */}
+            {/* PAYMENT METHOD (Displaying static info from DB if stored, or prompt to update) */}
             <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-3">
-                  <div className="bg-slate-50 p-2.5 rounded-xl text-slate-400">
-                    <CreditCard size={20} />
-                  </div>
-                  <h3 className="font-black uppercase text-slate-800">
-                    Payment Method
-                  </h3>
+              <h3 className="font-black uppercase text-slate-800 mb-4 flex items-center gap-2">
+                <CreditCard size={18} /> Payment Method
+              </h3>
+              <p className="text-sm text-slate-500 mb-4">
+                Payment methods are managed securely through Taag Checkout
+                during your next billing cycle.
+              </p>
+              <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                <div className="w-10 h-6 bg-slate-800 rounded text-[8px] flex items-center justify-center text-white">
+                  CARD
                 </div>
-                <button className="text-emerald-500 font-black uppercase text-[10px] tracking-widest hover:underline flex items-center gap-1">
-                  <Plus size={14} /> Add New
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between p-6 rounded-2xl border-2 border-emerald-500/20 bg-emerald-50/30">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-8 bg-slate-800 rounded flex items-center justify-center text-[10px] font-bold text-white uppercase">
-                    Visa
-                  </div>
-                  <div>
-                    <p className="font-bold text-slate-800 tracking-tight leading-none">
-                      •••• •••• •••• 4242
-                    </p>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase mt-1">
-                      Expires 12/28
-                    </p>
-                  </div>
-                </div>
-                <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">
-                  Primary
-                </span>
+                <p className="text-sm font-bold text-slate-700">
+                  {subscription?.email || user?.email}
+                </p>
               </div>
             </div>
           </div>
 
-          {/* RIGHT: INVOICE HISTORY (1 COLUMN) */}
+          {/* INVOICE HISTORY */}
           <div className="lg:col-span-1">
             <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm sticky top-28">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="bg-slate-50 p-2.5 rounded-xl text-slate-400">
-                  <Receipt size={20} />
-                </div>
-                <h3 className="font-black uppercase text-slate-800">
-                  Invoices
-                </h3>
+              <h3 className="font-black uppercase text-slate-800 mb-6 flex items-center gap-2">
+                <Receipt size={18} /> Invoices
+              </h3>
+              {/* In production, you would fetch these from Taag's GET /subscribers/all or a dedicated invoices table */}
+              <div className="text-center py-10">
+                <AlertCircle
+                  className="mx-auto text-slate-200 mb-2"
+                  size={32}
+                />
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                  Invoice history is sent to your email directly by Taag.
+                </p>
               </div>
-
-              <div className="space-y-4">
-                {invoices.map((inv) => (
-                  <div
-                    key={inv.id}
-                    className="flex items-center justify-between p-4 rounded-2xl hover:bg-slate-50 transition-all group border border-transparent hover:border-slate-100"
-                  >
-                    <div>
-                      <p className="font-black text-slate-800 text-sm">
-                        {inv.amount}
-                      </p>
-                      <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase mt-0.5">
-                        <Clock size={10} /> {inv.date}
-                      </div>
-                    </div>
-                    <button className="p-2 text-slate-300 hover:text-emerald-500 transition-colors">
-                      <Download size={18} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-
-              <button className="w-full mt-8 py-4 border-2 border-dashed border-slate-100 text-slate-400 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:border-emerald-200 hover:text-emerald-500 transition-all">
-                Load More History
-              </button>
             </div>
           </div>
         </div>
       </main>
-    </div>
-  );
-}
-
-// Helper Components
-function PlanFeature({ text }: { text: string }) {
-  return (
-    <div className="flex items-center gap-2">
-      <CheckCircle2 size={16} className="text-emerald-400" />
-      <span className="text-xs font-bold text-slate-300 tracking-tight">
-        {text}
-      </span>
     </div>
   );
 }

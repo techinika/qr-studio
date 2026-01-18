@@ -46,7 +46,6 @@ export default function TeamManagement() {
 
   const MAX_SEATS = 5;
 
-  // 1. RBAC LOGIC: Identify current user's role
   const currentUserMembership = useMemo(() => {
     return members.find((m) => m.email === user?.email);
   }, [members, user?.email]);
@@ -133,8 +132,8 @@ export default function TeamManagement() {
       await deleteDoc(doc(db, "workspaceMembers", member.id));
       toast.success("Member record removed");
       setActiveMenu(null);
-    } catch (err) {
-      toast.error("Failed to remove member");
+    } catch (err: any) {
+      toast.error(err?.message ?? "Failed to remove member");
     }
   };
 

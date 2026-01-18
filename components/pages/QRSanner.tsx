@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Html5Qrcode } from "html5-qrcode";
 import {
   Camera,
@@ -17,6 +18,7 @@ import {
   Layers,
   ZapIcon,
   Crown,
+  Loader2,
 } from "lucide-react";
 import Footer from "../parts/Footer";
 import Nav from "../parts/Nav";
@@ -24,17 +26,53 @@ import AdBanner from "../parts/AdBanner";
 import Link from "next/link";
 import { identifyAndRecordScan } from "@/db/functions/QRServices";
 import { useAuth } from "@/lib/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function QRScannerHome() {
   const { user } = useAuth();
+  const router = useRouter();
   const [scanResult, setScanResult] = useState<string>("");
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
+  const [plans, setPlans] = useState<any[]>([]);
+  const [plansLoading, setPlansLoading] = useState(true);
+
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const scannerId = "qr-reader";
+
+  useEffect(() => {
+    const fetchPricing = async () => {
+      try {
+        const response = await fetch("https://api.taag.cc/v1/verify/pricing", {
+          method: "GET",
+          headers: {
+            Authorization: process.env.NEXT_PUBLIC_TAAG_API_KEY ?? "",
+          },
+        });
+        const data = await response.json();
+        setPlans(data.plans || []);
+      } catch (err) {
+        console.error("Failed to load TAAG pricing", err);
+      } finally {
+        setPlansLoading(false);
+      }
+    };
+    fetchPricing();
+  }, []);
+
+  const monthlyPlan = plans.find((p) => p.interval === "MONTHLY") || plans[0];
+  const annualPlan = plans.find((p) => p.interval === "YEARLY");
+  const lifetimePlan = plans.find((p) =>
+    p.planName.toLowerCase().includes("lifetime"),
+  );
+
+  const handleSubscribe = (plan: any) => {
+    if (!plan) return;
+    router.push(`/subscribe/checkout?planId=${plan.planId}`);
+  };
 
   const getScanner = () => {
     try {
@@ -79,11 +117,11 @@ export default function QRScannerHome() {
             onScanSuccess();
             stopCamera();
           },
-          undefined
+          undefined,
         );
       } catch (err) {
         setError(
-          "Camera access denied. Please check your browser permissions."
+          "Camera access denied. Please check your browser permissions.",
         );
         setIsCameraActive(false);
       }
@@ -284,74 +322,104 @@ export default function QRScannerHome() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all group">
-              <div className="mb-8">
-                <h3 className="text-xl font-black uppercase mb-2">Monthly</h3>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-black">$9.99</span>
-                  <span className="text-slate-400 font-bold">/mo</span>
-                </div>
-              </div>
-              <ul className="space-y-4 mb-10">
-                <FeatureItem text="Dynamic QR Codes" />
-                <FeatureItem text="Scan Analytics" />
-                <FeatureItem text="Bulk Generation" />
-                <FeatureItem text="Password Protection" />
-              </ul>
-              <button className="w-full py-4 bg-slate-100 text-slate-600 rounded-2xl font-black uppercase group-hover:bg-slate-900 group-hover:text-white transition-all">
-                Get Started
-              </button>
+          {plansLoading ? (
+            <div className="flex justify-center py-20">
+              <Loader2 className="animate-spin text-emerald-500" size={40} />
             </div>
+          ) : (
+            <div className="grid md:grid-cols-3 gap-8">
+              {/* MONTHLY CARD */}
+              <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all group">
+                <div className="mb-8">
+                  <h3 className="text-xl font-black uppercase mb-2">
+                    {monthlyPlan?.planName || "Monthly"}
+                  </h3>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-4xl font-black">
+                      {monthlyPlan?.currency}{" "}
+                      {monthlyPlan?.formatedPrice || "9.99"}
+                    </span>
+                    <span className="text-slate-400 font-bold">/mo</span>
+                  </div>
+                </div>
+                <ul className="space-y-4 mb-10">
+                  <FeatureItem text="Dynamic QR Codes" />
+                  <FeatureItem text="Scan Analytics" />
+                  <FeatureItem text="Bulk Generation" />
+                  <FeatureItem text="Password Protection" />
+                </ul>
+                <button
+                  onClick={() => handleSubscribe(monthlyPlan)}
+                  className="w-full py-4 bg-slate-100 text-slate-600 rounded-2xl font-black uppercase group-hover:bg-slate-900 group-hover:text-white transition-all"
+                >
+                  Get Started
+                </button>
+              </div>
 
-            <div className="bg-slate-900 p-10 rounded-[3rem] border border-emerald-500/30 shadow-2xl shadow-emerald-500/10 relative transform lg:scale-110">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-emerald-500 text-white px-6 py-1 rounded-full text-xs font-black uppercase tracking-widest">
-                Best Value
-              </div>
-              <div className="mb-8 text-white">
-                <h3 className="text-xl font-black uppercase mb-2 text-emerald-400">
-                  Annual
-                </h3>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-black">$96</span>
-                  <span className="text-slate-400 font-bold">/yr</span>
+              {/* ANNUAL CARD (CENTERED) */}
+              <div className="bg-slate-900 p-10 rounded-[3rem] border border-emerald-500/30 shadow-2xl shadow-emerald-500/10 relative transform lg:scale-110">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-emerald-500 text-white px-6 py-1 rounded-full text-xs font-black uppercase tracking-widest">
+                  Best Value
                 </div>
-                <p className="text-emerald-500/60 text-xs font-bold uppercase mt-1">
-                  Only $8 per month
-                </p>
+                <div className="mb-8 text-white">
+                  <h3 className="text-xl font-black uppercase mb-2 text-emerald-400">
+                    {annualPlan?.planName || "Annual"}
+                  </h3>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-4xl font-black">
+                      {annualPlan?.currency} {annualPlan?.formatedPrice || "96"}
+                    </span>
+                    <span className="text-slate-400 font-bold">/yr</span>
+                  </div>
+                  <p className="text-emerald-500/60 text-xs font-bold uppercase mt-1">
+                    Huge Savings Applied
+                  </p>
+                </div>
+                <ul className="space-y-4 mb-10 text-slate-300">
+                  <FeatureItem text="All Pro Features" />
+                  <FeatureItem text="Priority Support" />
+                  <FeatureItem text="Custom Branding" />
+                  <FeatureItem text="Ad-free Experience" />
+                </ul>
+                <button
+                  onClick={() => handleSubscribe(annualPlan)}
+                  className="w-full py-4 bg-emerald-500 text-white rounded-2xl font-black uppercase hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20"
+                >
+                  Subscribe Now
+                </button>
               </div>
-              <ul className="space-y-4 mb-10 text-slate-300">
-                <FeatureItem text="All Pro Features" />
-                <FeatureItem text="Priority Support" />
-                <FeatureItem text="Custom Branding" />
-                <FeatureItem text="Ad-free Experience" />
-              </ul>
-              <button className="w-full py-4 bg-emerald-500 text-white rounded-2xl font-black uppercase hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20">
-                Subscribe Now
-              </button>
-            </div>
 
-            <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all group">
-              <div className="mb-8">
-                <h3 className="text-xl font-black uppercase mb-2">Lifetime</h3>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-black">$499</span>
+              {/* LIFETIME CARD */}
+              <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all group">
+                <div className="mb-8">
+                  <h3 className="text-xl font-black uppercase mb-2">
+                    {lifetimePlan?.planName || "Lifetime"}
+                  </h3>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-4xl font-black">
+                      {lifetimePlan?.currency}{" "}
+                      {lifetimePlan?.formatedPrice || "499"}
+                    </span>
+                  </div>
+                  <p className="text-slate-400 text-xs font-bold uppercase mt-1 text-nowrap">
+                    One-time payment
+                  </p>
                 </div>
-                <p className="text-slate-400 text-xs font-bold uppercase mt-1 text-nowrap">
-                  One-time payment
-                </p>
+                <ul className="space-y-4 mb-10">
+                  <FeatureItem text="Unlimited Lifetime Access" />
+                  <FeatureItem text="All Future Updates" />
+                  <FeatureItem text="Commercial License" />
+                  <FeatureItem text="White-label Exports" />
+                </ul>
+                <button
+                  onClick={() => handleSubscribe(lifetimePlan)}
+                  className="w-full py-4 bg-slate-100 text-slate-600 rounded-2xl font-black uppercase group-hover:bg-slate-900 group-hover:text-white transition-all"
+                >
+                  Own It Forever
+                </button>
               </div>
-              <ul className="space-y-4 mb-10">
-                <FeatureItem text="Unlimited Lifetime Access" />
-                <FeatureItem text="All Future Updates" />
-                <FeatureItem text="Commercial License" />
-                <FeatureItem text="White-label Exports" />
-              </ul>
-              <button className="w-full py-4 bg-slate-100 text-slate-600 rounded-2xl font-black uppercase group-hover:bg-slate-900 group-hover:text-white transition-all">
-                Own It Forever
-              </button>
             </div>
-          </div>
+          )}
 
           <AdBanner />
 
