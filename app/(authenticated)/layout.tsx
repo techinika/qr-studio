@@ -1,3 +1,4 @@
+import { SubscriptionGuard } from "@/components/pages/SubscriptionGuard";
 import WorkspaceNav from "@/components/parts/workspace/AuthNav";
 import type { Metadata } from "next";
 
@@ -13,9 +14,9 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <div>
+    <SubscriptionGuard>
       <WorkspaceNav />
       {children}
-    </div>
+    </SubscriptionGuard>
   );
 }
