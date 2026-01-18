@@ -55,7 +55,7 @@ export const SubscriptionProvider = ({
   return (
     <SubscriptionContext.Provider
       value={{
-        isSubscribed: !!subscription?.isActive,
+        isSubscribed: subscription ? !!subscription?.isActive : false,
         subscription,
         loading,
       }}
