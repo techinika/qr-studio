@@ -1,8 +1,11 @@
 import { QRCodes } from "@/types/qrcodes";
 import { ExternalLink, QrCode } from "lucide-react";
 import { formatDateFull } from "../../../lib/main";
+import { useRouter } from "next/navigation";
 
 export function HistoryView({ items }: { items: QRCodes[] }) {
+  const router = useRouter();
+
   return (
     <div className="bg-white rounded-[2.5rem] border border-slate-100 overflow-hidden shadow-sm">
       <table className="w-full text-left">
@@ -19,12 +22,13 @@ export function HistoryView({ items }: { items: QRCodes[] }) {
             </th>
           </tr>
         </thead>
-        
+
         <tbody className="divide-y divide-slate-50">
           {items.map((qr) => (
             <tr
-              key={qr.uid}
-              className="hover:bg-slate-50/50 transition-colors group"
+              key={qr?.id}
+              onClick={() => router.push(`/workspace/view/${qr?.id}`)}
+              className="hover:bg-slate-50/50 transition-colors group cursor-pointer"
             >
               <td className="px-8 py-6">
                 <div className="flex items-center gap-3">

@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   UserPlus,
   MoreHorizontal,
@@ -8,36 +9,111 @@ import {
   X,
   Check,
   Building2,
+  Loader2,
+  ShieldCheck,
+  UserMinus,
+  Users,
 } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
+import { db } from "@/db/firebase";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  doc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  serverTimestamp,
+} from "firebase/firestore";
+import { toast } from "sonner";
+import Loading from "@/app/loading";
 
 export default function TeamManagement() {
-  const { workspace } = useAuth();
-  const [showInviteModal, setShowInviteModal] = useState(false);
+  const { workspace, user } = useAuth();
 
-  const members = [
-    {
-      id: 1,
-      name: "John Doe",
-      email: "john@ubunifu.tech",
-      role: "Owner",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=John",
-    },
-    {
-      id: 2,
-      name: "Sarah Smith",
-      email: "sarah@ubunifu.tech",
-      role: "Admin",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
-    },
-    {
-      id: 3,
-      name: "Mike Ross",
-      email: "mike@ubunifu.tech",
-      role: "Editor",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mike",
-    },
-  ];
+  const [members, setMembers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteRole, setInviteRole] = useState("Member");
+  const [isSending, setIsSending] = useState(false);
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
+
+  const MAX_SEATS = 5;
+
+  useEffect(() => {
+    if (!workspace?.id) return;
+
+    const q = query(
+      collection(db, "workspaceMembers"),
+      where("workspaceId", "==", workspace.id),
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const membersList = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setMembers(membersList);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [workspace?.id]);
+
+  const handleInvite = async () => {
+    if (!inviteEmail.includes("@")) return toast.error("Valid email required");
+    if (members.length >= MAX_SEATS)
+      return toast.error("Workspace is full (5/5 seats)");
+
+    setIsSending(true);
+    try {
+      await addDoc(collection(db, "workspaceMembers"), {
+        email: inviteEmail.toLowerCase(),
+        role: inviteRole,
+        workspaceId: workspace?.id,
+        workspaceName: workspace?.name,
+        invitedBy: user?.email,
+        status: "pending",
+        createdAt: serverTimestamp(),
+      });
+
+      toast.success(`Invitation sent to ${inviteEmail}`);
+      setShowInviteModal(false);
+      setInviteEmail("");
+    } catch (err) {
+      toast.error("Failed to send invitation");
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  const updateMemberRole = async (memberId: string, newRole: string) => {
+    try {
+      await updateDoc(doc(db, "workspaceMembers", memberId), { role: newRole });
+      toast.success(`Role updated to ${newRole}`);
+      setActiveMenu(null);
+    } catch (err: any) {
+      toast.error(err?.message ?? "Failed to update role");
+    }
+  };
+
+  const removeMember = async (member: any) => {
+    if (member.role === "Owner") return toast.error("Cannot remove the Owner");
+    if (!confirm(`Remove ${member.email} from workspace?`)) return;
+
+    try {
+      await deleteDoc(doc(db, "workspaceMembers", member.id));
+      toast.success("Member removed");
+      setActiveMenu(null);
+    } catch (err) {
+      toast.error("Failed to remove member");
+    }
+  };
+
+  if (loading) return <Loading />;
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col">
@@ -56,52 +132,75 @@ export default function TeamManagement() {
           </div>
 
           <button
+            disabled={members.length >= MAX_SEATS}
             onClick={() => setShowInviteModal(true)}
-            className="flex items-center justify-center gap-2 bg-slate-900 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-emerald-600 transition-all shadow-xl shadow-slate-200 active:scale-95"
+            className="flex items-center justify-center gap-2 bg-slate-900 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-emerald-600 transition-all shadow-xl shadow-slate-200 active:scale-95 disabled:opacity-50"
           >
             <UserPlus size={18} /> Invite Member
           </button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-          <StatCard label="Total Members" value="03" />
-          <StatCard label="Active Invites" value="00" />
-          <StatCard label="Remaining Seats" value="02" />
+          <StatCard
+            label="Total Members"
+            value={members.length.toString().padStart(2, "0")}
+          />
+          <StatCard
+            label="Active Invites"
+            value={members
+              .filter((m) => m.status === "pending")
+              .length.toString()
+              .padStart(2, "0")}
+          />
+          <StatCard
+            label="Remaining Seats"
+            value={(MAX_SEATS - members.length).toString().padStart(2, "0")}
+          />
         </div>
 
-        <div className="bg-white rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-[3rem] border border-slate-100 shadow-sm overflow-visible relative">
           <div className="p-8 border-b border-slate-50 bg-slate-50/50 flex items-center justify-between">
             <h3 className="font-black uppercase text-slate-800 text-sm">
               Active Members
             </h3>
             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-              3 of 5 Seats Used
+              {members.length} of {MAX_SEATS} Seats Used
             </span>
           </div>
 
           <div className="divide-y divide-slate-50">
-            {members.map((member) => (
-              <div
-                key={member.id}
-                className="p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-4 group hover:bg-slate-50/50 transition-all"
-              >
-                <div className="flex items-center gap-5">
-                  <div className="w-14 h-14 rounded-2xl overflow-hidden bg-slate-100 border-2 border-white shadow-md">
-                    <img src={member.avatar} alt={member.name} />
-                  </div>
-                  <div>
-                    <h4 className="font-black text-slate-900 text-lg uppercase tracking-tight">
-                      {member.name}
-                    </h4>
-                    <div className="flex items-center gap-2 text-slate-400">
-                      <Mail size={12} />
-                      <p className="text-xs font-bold">{member.email}</p>
+            {members.length > 0 ? (
+              members.map((member) => (
+                <div
+                  key={member.id}
+                  className="p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-4 group hover:bg-slate-50/50 transition-all relative"
+                >
+                  <div className="flex items-center gap-5">
+                    <div className="w-14 h-14 rounded-2xl overflow-hidden bg-slate-100 border-2 border-white shadow-md flex items-center justify-center">
+                      <img
+                        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${member.email}`}
+                        alt="avatar"
+                      />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-black text-slate-900 text-lg uppercase tracking-tight">
+                          {member.email.split("@")[0]}
+                        </h4>
+                        {member.status === "pending" && (
+                          <span className="px-2 py-0.5 bg-amber-100 text-amber-600 text-[8px] font-black uppercase rounded-md tracking-widest">
+                            Invited
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 text-slate-400">
+                        <Mail size={12} />
+                        <p className="text-xs font-bold">{member.email}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="flex items-center justify-between md:justify-end gap-6">
-                  <div className="text-right">
+                  <div className="flex items-center justify-between md:justify-end gap-6">
                     <span
                       className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest ${
                         member.role === "Owner"
@@ -111,22 +210,82 @@ export default function TeamManagement() {
                     >
                       {member.role}
                     </span>
-                  </div>
 
-                  {member.role !== "Owner" && (
-                    <div className="flex items-center gap-2">
-                      <button className="p-3 text-slate-300 hover:text-slate-900 transition-colors bg-white border border-slate-100 rounded-xl">
-                        <MoreHorizontal size={18} />
-                      </button>
-                    </div>
-                  )}
+                    {member.role !== "Owner" && (
+                      <div className="relative">
+                        <button
+                          onClick={() =>
+                            setActiveMenu(
+                              activeMenu === member.id ? null : member.id,
+                            )
+                          }
+                          className="p-3 text-slate-300 hover:text-slate-900 transition-colors bg-white border border-slate-100 rounded-xl"
+                        >
+                          <MoreHorizontal size={18} />
+                        </button>
+
+                        {/* CONTEXT MENU */}
+                        {activeMenu === member.id && (
+                          <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-2xl border border-slate-100 py-2 z-50 animate-in fade-in slide-in-from-top-2">
+                            <button
+                              onClick={() =>
+                                updateMemberRole(
+                                  member.id,
+                                  member.role === "Admin" ? "Member" : "Admin",
+                                )
+                              }
+                              className="w-full px-4 py-3 flex items-center gap-3 hover:bg-slate-50 transition-colors text-[10px] font-black uppercase text-slate-600"
+                            >
+                              <ShieldCheck
+                                size={14}
+                                className="text-emerald-500"
+                              />
+                              {member.role === "Admin"
+                                ? "Revoke Admin"
+                                : "Make Admin"}
+                            </button>
+                            <button
+                              onClick={() => removeMember(member)}
+                              className="w-full px-4 py-3 flex items-center gap-3 hover:bg-red-50 transition-colors text-[10px] font-black uppercase text-red-500"
+                            >
+                              <UserMinus size={14} /> Remove Member
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
+              ))
+            ) : (
+              <div className="p-20 flex flex-col items-center text-center">
+                <div className="w-24 h-24 bg-slate-50 rounded-4xl flex items-center justify-center text-slate-200 mb-6 border border-slate-100">
+                  <Users size={48} strokeWidth={1.5} />
+                </div>
+                <h3 className="text-xl font-black text-slate-900 uppercase tracking-tighter">
+                  Invite Your Team
+                </h3>
+                <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-2 max-w-xs leading-loose">
+                  Collaboration makes the universe expand. Invite your first
+                  member to get started.
+                </p>
+                <button
+                  onClick={() => setShowInviteModal(true)}
+                  className="mt-8 flex items-center gap-2 text-emerald-500 font-black uppercase text-[10px] tracking-widest hover:text-emerald-600 transition-all group"
+                >
+                  <UserPlus
+                    size={14}
+                    className="group-hover:scale-110 transition-transform"
+                  />{" "}
+                  Invite Someone Now
+                </button>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </main>
 
+      {/* INVITE MODAL */}
       {showInviteModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
           <div
@@ -151,8 +310,7 @@ export default function TeamManagement() {
                 Invite Collaborator
               </h3>
               <p className="text-slate-500 text-sm mb-8 font-medium">
-                Empower your team by inviting them to manage QR Universes
-                together.
+                Add a new member to <b>{workspace?.name}</b>.
               </p>
 
               <div className="space-y-6">
@@ -162,6 +320,8 @@ export default function TeamManagement() {
                   </label>
                   <input
                     type="email"
+                    value={inviteEmail}
+                    onChange={(e) => setInviteEmail(e.target.value)}
                     placeholder="colleague@company.com"
                     className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-emerald-500 outline-none font-bold text-slate-700 transition-all"
                   />
@@ -172,22 +332,40 @@ export default function TeamManagement() {
                     Assigned Role
                   </label>
                   <div className="grid grid-cols-2 gap-3">
-                    <RoleOption
-                      label="Admin"
-                      desc="Full access"
-                      active={true}
-                    />
-                    <RoleOption
-                      label="Editor"
-                      desc="Edit only"
-                      active={false}
-                    />
+                    <button
+                      onClick={() => setInviteRole("Admin")}
+                      className="w-full"
+                    >
+                      <RoleOption
+                        label="Admin"
+                        desc="Full access"
+                        active={inviteRole === "Admin"}
+                      />
+                    </button>
+                    <button
+                      onClick={() => setInviteRole("Member")}
+                      className="w-full"
+                    >
+                      <RoleOption
+                        label="Member"
+                        desc="Limited"
+                        active={inviteRole === "Member"}
+                      />
+                    </button>
                   </div>
                 </div>
               </div>
 
-              <button className="w-full mt-10 bg-emerald-500 hover:bg-emerald-600 text-white py-5 rounded-2xl font-black uppercase tracking-widest text-xs transition-all active:scale-95 shadow-xl shadow-emerald-200">
-                Send Invitation
+              <button
+                onClick={handleInvite}
+                disabled={isSending}
+                className="w-full mt-10 bg-emerald-500 hover:bg-emerald-600 text-white py-5 rounded-2xl font-black uppercase tracking-widest text-xs transition-all active:scale-95 shadow-xl shadow-emerald-200 flex items-center justify-center gap-2"
+              >
+                {isSending ? (
+                  <Loader2 className="animate-spin" size={16} />
+                ) : (
+                  "Send Invitation"
+                )}
               </button>
             </div>
           </div>
@@ -221,17 +399,11 @@ function RoleOption({
 }) {
   return (
     <div
-      className={`p-4 rounded-2xl border-2 cursor-pointer transition-all ${
-        active
-          ? "border-emerald-500 bg-emerald-50/50"
-          : "border-slate-50 hover:border-slate-100"
-      }`}
+      className={`p-4 rounded-2xl border-2 text-left transition-all ${active ? "border-emerald-500 bg-emerald-50/50" : "border-slate-50 hover:border-slate-100"}`}
     >
       <div className="flex items-center justify-between mb-1">
         <span
-          className={`text-xs font-black uppercase ${
-            active ? "text-emerald-700" : "text-slate-400"
-          }`}
+          className={`text-xs font-black uppercase ${active ? "text-emerald-700" : "text-slate-400"}`}
         >
           {label}
         </span>

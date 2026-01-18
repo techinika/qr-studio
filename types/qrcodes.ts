@@ -14,6 +14,7 @@ export interface Scans {
 
 export interface QRCodes {
   uid: string;
+  id: string;
   name: string;
   scanCount: number;
   ownerId: string;
