@@ -46,6 +46,7 @@ export default function EditQRPage() {
   const [isProtected, setIsProtected] = useState(false);
   const [success, setSuccess] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showDisableModal, setShowDisableModal] = useState(false);
 
   useEffect(() => {
     const fetchQR = async () => {
@@ -99,6 +100,22 @@ export default function EditQRPage() {
       router.push("/workspace");
     } catch (err) {
       toast.error("Deletion failed");
+      setSaving(false);
+    }
+  };
+
+  const handleDisable = async () => {
+    try {
+      setSaving(true);
+      const docRef = doc(db, "qrcodes", id as string);
+      const newDisabledState = !qrData.isDisabled;
+      await updateDoc(docRef, { isDisabled: newDisabledState });
+      setQrData((prev: any) => ({ ...prev, isDisabled: newDisabledState }));
+      toast.success(newDisabledState ? "QR code disabled" : "QR code enabled");
+      setShowDisableModal(false);
+    } catch (err) {
+      toast.error("Failed to update QR code");
+    } finally {
       setSaving(false);
     }
   };
@@ -241,8 +258,32 @@ export default function EditQRPage() {
               )}
             </div>
 
+            {/* DISABLE ZONE */}
+            {qrData.isDynamic && (
+              <div className="bg-white p-6 rounded-lg border border-slate-100 shadow-sm flex items-center justify-between">
+                <div>
+                  <h4 className="font-black text-slate-900 uppercase text-xs">
+                    QR Status
+                  </h4>
+                  <p className="text-[10px] text-slate-400 font-bold uppercase">
+                    {qrData.isDisabled ? "Currently inactive" : "Currently active"}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowDisableModal(true)}
+                  className={`p-4 rounded-lg transition-all shadow-sm ${
+                    qrData.isDisabled 
+                      ? "bg-emerald-50 text-emerald-500 hover:bg-emerald-500 hover:text-white" 
+                      : "bg-amber-50 text-amber-500 hover:bg-amber-500 hover:text-white"
+                  }`}
+                >
+                  {qrData.isDisabled ? <Shield size={20} /> : <ShieldOff size={20} />}
+                </button>
+              </div>
+            )}
+
             {/* DANGER ZONE */}
-            <div className="bg-white p-10 rounded-lg border border-slate-100 shadow-sm flex items-center justify-between">
+            <div className="bg-white p-6 rounded-lg border border-slate-100 shadow-sm flex items-center justify-between">
               <div>
                 <h4 className="font-black text-slate-900 uppercase text-xs">
                   Danger Zone
@@ -306,8 +347,8 @@ export default function EditQRPage() {
                     <p className="text-[8px] font-black text-white/30 uppercase mb-1">
                       Status
                     </p>
-                    <p className="text-xl font-black text-emerald-400 uppercase">
-                      Live
+                    <p className={`text-xl font-black uppercase ${qrData.isDisabled ? "text-red-400" : "text-emerald-400"}`}>
+                      {qrData.isDisabled ? "Disabled" : "Live"}
                     </p>
                   </div>
                 </div>
@@ -362,6 +403,55 @@ export default function EditQRPage() {
                 className="w-full bg-slate-50 text-slate-400 py-4 rounded-lg font-black uppercase tracking-widest text-[10px] hover:bg-slate-100 transition-all"
               >
                 Keep Asset
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* DISABLE MODAL */}
+      {showDisableModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white w-full max-w-md rounded-lg p-10 shadow-2xl scale-in-center">
+            <div className="flex justify-between items-start mb-6">
+              <div className={`p-4 ${qrData.isDisabled ? "bg-emerald-50 text-emerald-500" : "bg-amber-50 text-amber-500"} rounded-lg`}>
+                {qrData.isDisabled ? <Shield size={24} /> : <ShieldOff size={24} />}
+              </div>
+              <button
+                onClick={() => setShowDisableModal(false)}
+                className="text-slate-300 hover:text-slate-900 transition-all"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter mb-2">
+              {qrData.isDisabled ? "Enable QR Code?" : "Disable QR Code?"}
+            </h3>
+            <p className="text-slate-500 font-medium leading-relaxed mb-8">
+              {qrData.isDisabled 
+                ? "This QR code will become active again. Users will be able to access the content."
+                : "This QR code will be discontinued and users will see a \"Discontinued\" message when they scan it. You can enable it again at any time."
+              }
+            </p>
+
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={handleDisable}
+                disabled={saving}
+                className={`w-full text-white py-4 rounded-lg font-black uppercase tracking-widest text-[10px] transition-all flex items-center justify-center gap-2 ${qrData.isDisabled ? "bg-emerald-500 hover:bg-emerald-600" : "bg-amber-500 hover:bg-amber-600"}`}
+              >
+                {saving ? (
+                  <Loader2 className="animate-spin" size={16} />
+                ) : (
+                  qrData.isDisabled ? "Enable QR Code" : "Disable QR Code"
+                )}
+              </button>
+              <button
+                onClick={() => setShowDisableModal(false)}
+                className="w-full bg-slate-50 text-slate-400 py-4 rounded-lg font-black uppercase tracking-widest text-[10px] hover:bg-slate-100 transition-all"
+              >
+                Cancel
               </button>
             </div>
           </div>

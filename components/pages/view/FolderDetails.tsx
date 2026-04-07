@@ -24,8 +24,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Search,
-  LayoutGrid,
   FolderPlus,
+  ShieldOff,
+  Shield,
 } from "lucide-react";
 import Link from "next/link";
 import { baseUrl } from "@/lib/main";
@@ -52,7 +53,7 @@ export default function FolderItemsPage({ folderId }: { folderId: string }) {
   } | null>(null);
 
   const [confirmState, setConfirmState] = useState<{
-    type: "remove" | "delete";
+    type: "remove" | "delete" | "disable";
     itemId: string;
   } | null>(null);
 
@@ -118,6 +119,23 @@ export default function FolderItemsPage({ folderId }: { folderId: string }) {
       toast.success("Asset destroyed");
     } catch (err) {
       toast.error("Deletion failed");
+    } finally {
+      setConfirmState(null);
+    }
+  };
+
+  const handleDisableItem = async () => {
+    if (!confirmState?.itemId) return;
+    try {
+      const item = items.find(i => i.id === confirmState.itemId);
+      const newDisabledState = !item?.isDisabled;
+      await updateDoc(doc(db, "qrcodes", confirmState.itemId), { isDisabled: newDisabledState });
+      setItems((prev) => prev.map((i) => 
+        i.id === confirmState.itemId ? { ...i, isDisabled: newDisabledState } : i
+      ));
+      toast.success(newDisabledState ? "QR code disabled" : "QR code enabled");
+    } catch (err) {
+      toast.error("Failed to update QR code");
     } finally {
       setConfirmState(null);
     }
@@ -303,6 +321,21 @@ export default function FolderItemsPage({ folderId }: { folderId: string }) {
           >
             <Edit3 size={14} className="text-emerald-500" /> View
           </button>
+          {items.find(i => i.id === menuConfig.itemId)?.isDynamic && (
+            <button
+              onClick={() => {
+                setConfirmState({ type: "disable", itemId: menuConfig.itemId });
+                setMenuConfig(null);
+              }}
+              className="w-full px-4 py-2.5 flex items-center gap-2 hover:bg-slate-50 transition-colors text-slate-600 text-xs font-bold"
+            >
+              {items.find(i => i.id === menuConfig.itemId)?.isDisabled 
+                ? <Shield size={14} className="text-emerald-500" /> 
+                : <ShieldOff size={14} className="text-amber-500" />
+              }
+              {items.find(i => i.id === menuConfig.itemId)?.isDisabled ? "Enable" : "Disable"}
+            </button>
+          )}
           <button
             onClick={() => {
               setConfirmState({ type: "remove", itemId: menuConfig.itemId });
@@ -342,6 +375,19 @@ export default function FolderItemsPage({ folderId }: { folderId: string }) {
         confirmLabel="Delete"
         type="danger"
         onConfirm={handleDeleteItem}
+        onCancel={() => setConfirmState(null)}
+      />
+
+      <ConfirmModal
+        open={confirmState?.type === "disable"}
+        title={items.find(i => i.id === confirmState?.itemId)?.isDisabled ? "Enable QR Code" : "Disable QR Code"}
+        message={items.find(i => i.id === confirmState?.itemId)?.isDisabled 
+          ? "This QR code will become active again. Users will be able to access the content."
+          : "This QR code will be discontinued. Users will see a 'Discontinued' message when they scan it."
+        }
+        confirmLabel={items.find(i => i.id === confirmState?.itemId)?.isDisabled ? "Enable" : "Disable"}
+        type={items.find(i => i.id === confirmState?.itemId)?.isDisabled ? "info" : "warning"}
+        onConfirm={handleDisableItem}
         onCancel={() => setConfirmState(null)}
       />
     </div>

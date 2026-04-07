@@ -140,6 +140,7 @@ export default function AdvancedBuilder() {
         workspaceId: workspace.id,
         ownerId: user.uid,
         isDynamic,
+        isDisabled: false,
         isPasswordProtected,
         password: isPasswordProtected ? password : null,
         fgColor,
