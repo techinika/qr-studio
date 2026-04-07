@@ -99,7 +99,7 @@ export default function RedirectGate({ qrcode }: { qrcode: string }) {
           <div className="w-20 h-20 bg-red-50 rounded-4xl flex items-center justify-center mx-auto text-red-500">
             <AlertTriangle size={32} />
           </div>
-          <h1 className="text-3xl font-black text-slate-900 uppercase italic">
+          <h1 className="text-3xl font-black text-slate-900 uppercase">
             404: Broken Link
           </h1>
           <p className="text-slate-500 font-medium">

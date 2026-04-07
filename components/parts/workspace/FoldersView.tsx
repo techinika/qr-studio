@@ -22,16 +22,21 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import { toast } from "sonner";
+import { ConfirmModal } from "../ConfirmModal";
 
 export function FoldersView({ items }: { items: any[] }) {
   const router = useRouter();
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [confirmState, setConfirmState] = useState<{
+    type: "delete" | "deleteAll";
+    folder: any;
+  } | null>(null);
 
-  const deleteFolderOnly = async (folder: any) => {
-    if (!confirm(`Delete "${folder.name}"? Items will be moved to workspace.`))
-      return;
+  const deleteFolderOnly = async () => {
+    if (!confirmState?.folder) return;
     setIsProcessing(true);
+    const folder = confirmState.folder;
     const batch = writeBatch(db);
 
     try {
@@ -54,14 +59,13 @@ export function FoldersView({ items }: { items: any[] }) {
       toast.error(err?.message ?? "Failed to delete folder");
     } finally {
       setIsProcessing(false);
-      setActiveMenu(null);
+      setConfirmState(null);
     }
   };
 
-  const deleteFolderAndItems = async (folder: any) => {
-    const warning = `PERMANENT DELETION: This will destroy the folder "${folder.name}" and ALL ${folder.count} QR codes inside it. Continue?`;
-    if (!confirm(warning)) return;
-
+  const deleteFolderAndItems = async () => {
+    if (!confirmState?.folder) return;
+    const folder = confirmState.folder;
     setIsProcessing(true);
     const batch = writeBatch(db);
 
@@ -85,129 +89,141 @@ export function FoldersView({ items }: { items: any[] }) {
       toast.error(err?.message ?? "Mass deletion failed");
     } finally {
       setIsProcessing(false);
-      setActiveMenu(null);
+      setConfirmState(null);
     }
   };
 
   return (
-    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 relative">
-      {items.map((folder) => (
-        <div
-          key={folder?.id}
-          onClick={() =>
-            !activeMenu && router.push(`/workspace/folder/${folder?.id}`)
-          }
-          className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl hover:border-emerald-100 transition-all cursor-pointer group flex flex-col justify-between relative"
-        >
-          {activeMenu === folder.id && (
-            <div
-              className="absolute inset-0 z-20 bg-white/95 backdrop-blur-sm rounded-[2.5rem] p-6 flex flex-col justify-center animate-in fade-in zoom-in-95"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex justify-between items-center mb-6">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                  Folder Options
-                </p>
-                <button
-                  onClick={() => setActiveMenu(null)}
-                  className="p-2 hover:bg-slate-100 rounded-full transition-colors"
-                >
-                  <X size={16} />
-                </button>
-              </div>
-
-              <div className="space-y-3">
-                <button
-                  disabled={isProcessing}
-                  onClick={() => deleteFolderOnly(folder)}
-                  className="w-full flex items-center gap-3 p-4 rounded-2xl bg-slate-50 hover:bg-amber-50 text-slate-600 hover:text-amber-600 transition-all group/btn"
-                >
-                  <FolderX size={18} />
-                  <div className="text-left">
-                    <p className="text-[10px] font-black uppercase">
-                      Delete Folder Only
-                    </p>
-                    <p className="text-[8px] font-bold opacity-60">
-                      Keep QR codes in workspace
-                    </p>
-                  </div>
-                </button>
-
-                <button
-                  disabled={isProcessing}
-                  onClick={() => deleteFolderAndItems(folder)}
-                  className="w-full flex items-center gap-3 p-4 rounded-2xl bg-red-50 hover:bg-red-500 text-red-500 hover:text-white transition-all"
-                >
-                  <Trash2 size={18} />
-                  <div className="text-left">
-                    <p className="text-[10px] font-black uppercase">
-                      Nuke Everything
-                    </p>
-                    <p className="text-[8px] font-bold opacity-60">
-                      Delete folder & all assets
-                    </p>
-                  </div>
-                </button>
-              </div>
-
-              {isProcessing && (
-                <div className="mt-4 flex items-center justify-center gap-2 text-emerald-500 font-bold text-[10px] uppercase">
-                  <Loader2 size={14} className="animate-spin" /> Processing...
-                </div>
-              )}
-            </div>
-          )}
-
-          <div>
-            <div className="flex justify-between items-start mb-6">
-              <div className="bg-emerald-50 p-4 rounded-2xl text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
-                <FolderRoot size={24} />
-              </div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setActiveMenu(folder.id);
-                }}
-                className="text-slate-300 hover:text-slate-900 p-1 transition-colors"
+    <>
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 relative">
+        {items.map((folder) => (
+          <div
+            key={folder?.id}
+            onClick={() =>
+              !activeMenu && router.push(`/workspace/folder/${folder?.id}`)
+            }
+            className="bg-white p-6 rounded-lg border border-slate-100 shadow-sm hover:shadow-lg hover:border-emerald-100 transition-all cursor-pointer group flex flex-col justify-between relative"
+          >
+            {activeMenu === folder.id && (
+              <div
+                className="absolute inset-0 z-20 bg-white/95 backdrop-blur-sm rounded-lg p-4 flex flex-col justify-center"
+                onClick={(e) => e.stopPropagation()}
               >
-                <MoreVertical size={20} />
-              </button>
-            </div>
+                <div className="flex justify-between items-center mb-4">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    Folder Options
+                  </p>
+                  <button
+                    onClick={() => setActiveMenu(null)}
+                    className="p-1 hover:bg-slate-100 rounded-lg transition-colors"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
 
-            <h3 className="text-xl font-black text-slate-800 uppercase mb-1 truncate">
-              {folder.name}
-            </h3>
-            <p className="text-sm font-bold text-slate-400 mb-6">
-              {folder.count} {folder.count === 1 ? "QR Code" : "QR Codes"}
-            </p>
-          </div>
+                <div className="space-y-2">
+                  <button
+                    disabled={isProcessing}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setConfirmState({ type: "delete", folder });
+                    }}
+                    className="w-full flex items-center gap-3 p-3 rounded-lg bg-slate-50 hover:bg-amber-50 text-slate-600 hover:text-amber-600 transition-all"
+                  >
+                    <FolderX size={16} />
+                    <div className="text-left">
+                      <p className="text-[10px] font-black uppercase">
+                        Delete Folder Only
+                      </p>
+                      <p className="text-[8px] font-bold opacity-60">
+                        Keep QR codes in workspace
+                      </p>
+                    </div>
+                  </button>
 
-          <div className="pt-6 border-t border-slate-50 flex items-center justify-between">
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-              Created{" "}
-              {folder.createdAt
-                ? formatMonthYear(folder.createdAt)
-                : "Recently"}
-            </span>
+                  <button
+                    disabled={isProcessing}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setConfirmState({ type: "deleteAll", folder });
+                    }}
+                    className="w-full flex items-center gap-3 p-3 rounded-lg bg-red-50 hover:bg-red-500 text-red-500 hover:text-white transition-all"
+                  >
+                    <Trash2 size={16} />
+                    <div className="text-left">
+                      <p className="text-[10px] font-black uppercase">
+                        Delete Everything
+                      </p>
+                      <p className="text-[8px] font-bold opacity-60">
+                        Delete folder & all assets
+                      </p>
+                    </div>
+                  </button>
+                </div>
 
-            <div className="flex -space-x-2">
-              {[...Array(Math.min(folder.count, 3))].map((_, i) => (
-                <div
-                  key={i}
-                  className="w-7 h-7 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center text-[8px] font-bold text-slate-400"
+                {isProcessing && (
+                  <div className="mt-3 flex items-center justify-center gap-2 text-emerald-500 font-bold text-[10px] uppercase">
+                    <Loader2 size={12} className="animate-spin" /> Processing...
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div>
+              <div className="flex justify-between items-start mb-4">
+                <div className="bg-emerald-50 p-3 rounded-lg text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+                  <FolderRoot size={20} />
+                </div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveMenu(folder.id);
+                  }}
+                  className="text-slate-300 hover:text-slate-900 p-1 transition-colors"
                 >
-                  QR
-                </div>
-              ))}
-              {folder.count > 3 && (
-                <div className="w-7 h-7 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-[8px] font-bold text-white">
-                  +{folder.count - 3}
-                </div>
-              )}
+                  <MoreVertical size={18} />
+                </button>
+              </div>
+
+              <h3 className="text-lg font-black text-slate-800 uppercase mb-1 truncate">
+                {folder.name}
+              </h3>
+              <p className="text-sm font-bold text-slate-400 mb-4">
+                {folder.count} {folder.count === 1 ? "QR Code" : "QR Codes"}
+              </p>
+            </div>
+
+            <div className="pt-4 border-t border-slate-50 flex items-center justify-between">
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                Created{" "}
+                {folder.createdAt
+                  ? formatMonthYear(folder.createdAt)
+                  : "Recently"}
+              </span>
             </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+
+      <ConfirmModal
+        open={confirmState?.type === "delete"}
+        title="Delete Folder"
+        message={`Delete "${confirmState?.folder?.name}"? All QR codes will be moved to your workspace.`}
+        confirmLabel="Delete"
+        type="warning"
+        onConfirm={deleteFolderOnly}
+        onCancel={() => setConfirmState(null)}
+      />
+
+      <ConfirmModal
+        open={confirmState?.type === "deleteAll"}
+        title="Delete Everything"
+        message={`This will permanently delete "${confirmState?.folder?.name}" and all ${confirmState?.folder?.count} QR codes inside it. This action cannot be undone.`}
+        confirmLabel="Delete All"
+        type="danger"
+        onConfirm={deleteFolderAndItems}
+        onCancel={() => setConfirmState(null)}
+      />
+    </>
   );
 }

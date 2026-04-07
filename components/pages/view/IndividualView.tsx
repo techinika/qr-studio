@@ -298,7 +298,7 @@ export default function EditQRPage() {
                     <p className="text-[8px] font-black text-white/30 uppercase mb-1">
                       Scans
                     </p>
-                    <p className="text-xl font-black text-white italic">
+                    <p className="text-xl font-black text-white">
                       {qrData.scanCount || 0}
                     </p>
                   </div>
@@ -306,7 +306,7 @@ export default function EditQRPage() {
                     <p className="text-[8px] font-black text-white/30 uppercase mb-1">
                       Status
                     </p>
-                    <p className="text-xl font-black text-emerald-400 italic uppercase">
+                    <p className="text-xl font-black text-emerald-400 uppercase">
                       Live
                     </p>
                   </div>

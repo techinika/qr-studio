@@ -2,8 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { useSubscription } from "@/lib/SubscriptionContext";
-import SubscribePage from "./workspace/SubscribePage";
+import { useAuth } from "@/lib/AuthContext";
 import { Home, LogOut } from "lucide-react";
 import { auth } from "@/db/firebase";
 
@@ -12,36 +11,26 @@ export const SubscriptionGuard = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { isSubscribed, loading } = useSubscription();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isSubscribed) {
-      router.push("/subscribe");
+    if (!loading && !user) {
+      router.push("/login");
     }
-  }, [isSubscribed, loading, router]);
+  }, [user, loading, router]);
 
   const handleSignOut = () => auth.signOut().then(() => router.push("/login"));
 
-  return isSubscribed ? (
-    <>{children}</>
-  ) : (
-    <div>
-      <div className="flex items-center justify-between p-3">
-        <button
-          onClick={() => router.push("/")}
-          className="flex items-center gap-3 p-3 rounded-xl hover:bg-teal-50 text-team-500 font-bold text-sm transition-all"
-        >
-          <Home size={18} /> Home
-        </button>
-        <button
-          onClick={handleSignOut}
-          className="flex items-center gap-3 p-3 rounded-xl hover:bg-red-50 text-red-500 font-bold text-sm transition-all"
-        >
-          <LogOut size={18} /> Log Out
-        </button>
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC]">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-emerald-500 border-t-transparent"></div>
       </div>
-      <SubscribePage />
-    </div>
-  );
+    );
+  }
+
+  return user ? (
+    <>{children}</>
+  ) : null;
 };

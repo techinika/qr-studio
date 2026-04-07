@@ -61,10 +61,7 @@ export default function LoginPage() {
                   <QrCodeIcon className="text-white w-6 h-6" />
                 </div>
                 <span className="text-2xl font-black tracking-tighter uppercase">
-                  QR STUDIO{" "}
-                  <span className="text-emerald-500 text-sm align-top ml-1">
-                    PRO
-                  </span>
+                  QR STUDIO
                 </span>
               </div>
 
@@ -80,8 +77,8 @@ export default function LoginPage() {
                   desc="Edit links after printing."
                 />
                 <BenefitItem
-                  title="Bulk Export"
-                  desc="Generate 100+ codes instantly."
+                  title="Analytics Dashboard"
+                  desc="Track scans and performance."
                 />
                 <BenefitItem
                   title="Secure Storage"

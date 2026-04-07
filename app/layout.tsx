@@ -12,24 +12,47 @@ const RubikFont = Rubik({
 });
 
 export const metadata: Metadata = {
-  title: "QR STUDIO | Professional Dynamic QR Code Generator & Analytics",
+  title: "QR STUDIO | Free Dynamic QR Code Generator with Analytics",
   description:
-    "Generate, track, and manage secure dynamic QR codes. Features bulk creation, password protection, and real-time scan analytics for teams.",
+    "Create high-quality dynamic QR codes for free. Track scans, customize colors and logos, password protect your codes. No subscription required.",
   keywords: [
     "QR code generator",
+    "free QR code",
     "dynamic QR code",
     "QR analytics",
-    "bulk QR creation",
-    "secure QR scanner",
+    "QR code maker",
+    "custom QR code",
+    "QR code with logo",
   ],
+  authors: [{ name: "Ubunifu Labs" }],
+  creator: "Ubunifu Labs",
+  publisher: "Ubunifu Labs",
   openGraph: {
-    title: "QR STUDIO - The Professional QR Universe",
-    description: "The all-in-one workspace for your QR code strategy.",
+    title: "QR STUDIO | Free Dynamic QR Code Generator with Analytics",
+    description: "Create, track, and manage QR codes with professional-grade tools. Completely free.",
     images: [{ url: "/qr-studio.png", width: 1200, height: 630 }],
     type: "website",
+    locale: "en_US",
+    siteName: "QR Studio",
   },
   twitter: {
     card: "summary_large_image",
+    title: "QR STUDIO | Free Dynamic QR Code Generator",
+    description: "Create, track, and manage QR codes with professional-grade tools. Completely free.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  alternates: {
+    canonical: "https://qrstudio.app",
   },
 };
 
@@ -51,6 +74,7 @@ export default function RootLayout({
           name="google-site-verification"
           content="D3LBrk5L1VNTNkkazkp5cAkDmWp_dzOE7ORnVxdvvP4"
         />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
       <body className={`${RubikFont.variable} antialiased`}>
         <AuthProvider>

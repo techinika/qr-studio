@@ -10,7 +10,6 @@ import {
   Check,
   Building2,
   Users,
-  CreditCard,
   LayoutDashboard,
   QrCodeIcon,
 } from "lucide-react";
@@ -199,7 +198,7 @@ export default function WorkspaceNav() {
                   {profile?.name}
                 </p>
                 <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mt-1">
-                  Pro Member
+                  Team Member
                 </p>
               </div>
               <div className="w-10 h-10 rounded-full border-2 border-white shadow-md group-hover:border-emerald-500 overflow-hidden bg-slate-200 transition-all">
@@ -239,15 +238,6 @@ export default function WorkspaceNav() {
                   className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-bold text-sm transition-all"
                 >
                   <Users size={18} className="text-slate-400" /> Team Management
-                </Link>
-
-                <Link
-                  href="/workspace/profile/billing"
-                  onClick={() => setIsUserMenuOpen(false)}
-                  className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-bold text-sm transition-all"
-                >
-                  <CreditCard size={18} className="text-slate-400" /> Billing &
-                  Plan
                 </Link>
 
                 <div className="h-px bg-slate-50 my-2" />

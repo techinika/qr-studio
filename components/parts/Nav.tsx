@@ -19,11 +19,11 @@ function Nav() {
   const isActive = (path: string) => pathname === path;
 
   return (
-    <>
+    <div className="container mx-auto">
       <nav className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-emerald-100">
-        <div className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
+        <div className="px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="bg-emerald-500 p-2 rounded-xl shadow-lg shadow-emerald-200 group-hover:rotate-12 transition-transform">
+            <div className="bg-emerald-500 p-2 rounded-lg shadow-lg shadow-emerald-200 group-hover:rotate-12 transition-transform">
               <QrCodeIcon className="text-white w-5 h-5" />
             </div>
             <span className="text-xl font-black tracking-tighter text-slate-800 uppercase">
@@ -33,9 +33,9 @@ function Nav() {
 
           <div className="hidden md:flex items-center gap-8">
             <Link
-              href="/"
+              href="/scan"
               className={`text-sm font-bold uppercase tracking-widest transition-colors ${
-                isActive("/")
+                isActive("/scan")
                   ? "text-emerald-600"
                   : "text-slate-500 hover:text-emerald-500"
               }`}
@@ -67,7 +67,7 @@ function Nav() {
           {user ? (
             <Link
               href="/workspace"
-              className="flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-emerald-600 transition-all shadow-lg shadow-slate-200"
+              className="flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-lg font-bold text-sm hover:bg-emerald-600 transition-all shadow-lg shadow-slate-200"
             >
               <LayoutDashboard size={18} />
               <span>Dashboard</span>
@@ -75,7 +75,7 @@ function Nav() {
           ) : (
             <Link
               href="/login"
-              className="flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-emerald-600 transition-all shadow-lg shadow-slate-200"
+              className="flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-lg font-bold text-sm hover:bg-emerald-600 transition-all shadow-lg shadow-slate-200"
             >
               <UserCircle size={18} />
               <span>Sign In</span>
@@ -85,11 +85,11 @@ function Nav() {
       </nav>
 
       <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-100">
-        <div className="bg-slate-900/90 backdrop-blur-lg rounded-3xl p-2 shadow-2xl border border-white/10 flex items-center justify-around">
+        <div className="bg-slate-900/90 backdrop-blur-lg rounded-xl p-2 shadow-2xl border border-white/10 flex items-center justify-around">
           <Link
-            href="/"
-            className={`flex flex-1 items-center justify-center gap-3 py-4 rounded-2xl transition-all ${
-              isActive("/")
+            href="/scan"
+            className={`flex flex-1 items-center justify-center gap-3 py-4 rounded-xl transition-all ${
+              isActive("/scan")
                 ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/40"
                 : "text-slate-400 hover:text-white"
             }`}
@@ -104,7 +104,7 @@ function Nav() {
 
           <Link
             href="/generate"
-            className={`flex flex-1 items-center justify-center gap-3 py-4 rounded-2xl transition-all ${
+            className={`flex flex-1 items-center justify-center gap-3 py-4 rounded-xl transition-all ${
               isActive("/generate")
                 ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/40"
                 : "text-slate-400 hover:text-white"
@@ -117,7 +117,7 @@ function Nav() {
           </Link>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
