@@ -24,15 +24,20 @@ import {
   ChevronLeft,
   ChevronRight,
   Search,
-  LayoutGrid,
+  FolderPlus,
+  ShieldOff,
+  Shield,
 } from "lucide-react";
 import Link from "next/link";
 import { baseUrl } from "@/lib/main";
 import { toast } from "sonner";
 import Loading from "@/app/loading";
+import { ConfirmModal } from "@/components/parts/ConfirmModal";
+import { useAuth } from "@/lib/AuthContext";
 
 export default function FolderItemsPage({ folderId }: { folderId: string }) {
   const router = useRouter();
+  const { workspace } = useAuth();
 
   const [folder, setFolder] = useState<any>(null);
   const [items, setItems] = useState<any[]>([]);
@@ -47,8 +52,15 @@ export default function FolderItemsPage({ folderId }: { folderId: string }) {
     itemId: string;
   } | null>(null);
 
+  const [confirmState, setConfirmState] = useState<{
+    type: "remove" | "delete" | "disable";
+    itemId: string;
+  } | null>(null);
+
   useEffect(() => {
     const fetchData = async () => {
+      if (!workspace?.id) return;
+      
       try {
         const folderSnap = await getDoc(doc(db, "folders", folderId));
         if (!folderSnap.exists()) {
@@ -56,10 +68,19 @@ export default function FolderItemsPage({ folderId }: { folderId: string }) {
           router.push("/workspace");
           return;
         }
-        setFolder(folderSnap.data());
+        
+        const folderData = folderSnap.data();
+        if (folderData.workspaceId !== workspace.id) {
+          toast.error("Access denied");
+          router.push("/workspace");
+          return;
+        }
+        
+        setFolder(folderData);
 
         const q = query(
           collection(db, "qrcodes"),
+          where("workspaceId", "==", workspace.id),
           where("folderId", "==", folderId),
         );
         const itemsSnap = await getDocs(q);
@@ -75,27 +96,48 @@ export default function FolderItemsPage({ folderId }: { folderId: string }) {
       }
     };
     fetchData();
-  }, [folderId, router]);
+  }, [folderId, router, workspace?.id]);
 
-  const handleRemoveFromFolder = async (itemId: string) => {
+  const handleRemoveFromFolder = async () => {
+    if (!confirmState?.itemId) return;
     try {
-      await updateDoc(doc(db, "qrcodes", itemId), { folderId: null });
-      setItems((prev) => prev.filter((i) => i.id !== itemId));
+      await updateDoc(doc(db, "qrcodes", confirmState.itemId), { folderId: null });
+      setItems((prev) => prev.filter((i) => i.id !== confirmState.itemId));
       toast.success("Asset moved to main workspace");
     } catch (err) {
       toast.error("Failed to remove");
+    } finally {
+      setConfirmState(null);
     }
   };
 
-  const handleDeleteItem = async (itemId: string) => {
-    if (!confirm("Are you sure you want to permanently delete this asset?"))
-      return;
+  const handleDeleteItem = async () => {
+    if (!confirmState?.itemId) return;
     try {
-      await deleteDoc(doc(db, "qrcodes", itemId));
-      setItems((prev) => prev.filter((i) => i.id !== itemId));
+      await deleteDoc(doc(db, "qrcodes", confirmState.itemId));
+      setItems((prev) => prev.filter((i) => i.id !== confirmState.itemId));
       toast.success("Asset destroyed");
     } catch (err) {
       toast.error("Deletion failed");
+    } finally {
+      setConfirmState(null);
+    }
+  };
+
+  const handleDisableItem = async () => {
+    if (!confirmState?.itemId) return;
+    try {
+      const item = items.find(i => i.id === confirmState.itemId);
+      const newDisabledState = !item?.isDisabled;
+      await updateDoc(doc(db, "qrcodes", confirmState.itemId), { isDisabled: newDisabledState });
+      setItems((prev) => prev.map((i) => 
+        i.id === confirmState.itemId ? { ...i, isDisabled: newDisabledState } : i
+      ));
+      toast.success(newDisabledState ? "QR code disabled" : "QR code enabled");
+    } catch (err) {
+      toast.error("Failed to update QR code");
+    } finally {
+      setConfirmState(null);
     }
   };
 
@@ -118,13 +160,13 @@ export default function FolderItemsPage({ folderId }: { folderId: string }) {
       onClick={() => setMenuConfig(null)}
     >
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-          <div className="flex items-center gap-5">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+          <div className="flex items-center gap-4">
             <Link
               href="/workspace"
-              className="p-3 bg-white rounded-2xl border border-slate-100 text-slate-400 hover:text-emerald-500 transition-all shadow-sm"
+              className="p-2 bg-white rounded-lg border border-slate-100 text-slate-400 hover:text-emerald-500 transition-all shadow-sm"
             >
-              <ArrowLeft size={20} />
+              <ArrowLeft size={18} />
             </Link>
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -132,11 +174,11 @@ export default function FolderItemsPage({ folderId }: { folderId: string }) {
                   Folder
                 </span>
               </div>
-              <h1 className="text-3xl font-black text-slate-900 uppercase tracking-tighter leading-none">
+              <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tighter leading-none">
                 {folder?.name}
               </h1>
-              <p className="text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em] mt-2">
-                {items.length} High-Resolution Assets
+              <p className="text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em] mt-1">
+                {items.length} QR Codes
               </p>
             </div>
           </div>
@@ -144,49 +186,48 @@ export default function FolderItemsPage({ folderId }: { folderId: string }) {
           <div className="flex items-center gap-3">
             <div className="relative">
               <Search
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"
-                size={18}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300"
+                size={16}
               />
               <input
                 type="text"
-                placeholder="Search assets..."
+                placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 pr-6 py-4 bg-white border border-slate-100 rounded-2xl outline-none focus:border-emerald-500 font-bold text-sm w-64 shadow-sm"
+                className="pl-10 pr-4 py-3 bg-white border border-slate-100 rounded-lg outline-none focus:border-emerald-500 font-bold text-sm w-56 shadow-sm"
               />
             </div>
           </div>
         </div>
 
-        {/* GRID VIEW */}
         {paginatedItems.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {paginatedItems.map((item) => (
               <div
                 key={item.id}
-                className="group bg-white rounded-[2.5rem] border border-slate-100 p-6 transition-all hover:shadow-2xl hover:shadow-emerald-500/5 hover:-translate-y-1 relative cursor-pointer"
+                className="group bg-white rounded-lg border border-slate-100 p-4 transition-all hover:shadow-lg hover:border-emerald-100 relative cursor-pointer"
                 onContextMenu={(e) => {
                   e.preventDefault();
                   setMenuConfig({ x: e.pageX, y: e.pageY, itemId: item.id });
                 }}
                 onClick={() => router.push(`/workspace/view/${item.id}`)}
               >
-                <div className="bg-slate-50 rounded-[1.8rem] p-6 mb-6 flex items-center justify-center transition-all group-hover:bg-white border border-transparent group-hover:border-emerald-50">
+                <div className="bg-slate-50 rounded-lg p-4 mb-4 flex items-center justify-center">
                   <QRCodeCanvas
                     value={
                       item.isDynamic
                         ? `${baseUrl}/r/${item.uuid}`
                         : item.originalUrl
                     }
-                    size={140}
+                    size={100}
                     fgColor={item.fgColor || "#000000"}
                     level="H"
                     imageSettings={
                       item.logo
                         ? {
                             src: item.logo,
-                            height: 30,
-                            width: 30,
+                            height: 24,
+                            width: 24,
                             excavate: true,
                           }
                         : undefined
@@ -195,8 +236,8 @@ export default function FolderItemsPage({ folderId }: { folderId: string }) {
                 </div>
 
                 <div className="flex items-center justify-between gap-2">
-                  <div className="truncate">
-                    <h3 className="font-black text-slate-800 uppercase text-xs truncate tracking-tight">
+                  <div className="truncate flex-1">
+                    <h3 className="font-black text-slate-800 uppercase text-xs truncate">
                       {item.name}
                     </h3>
                     <p className="text-[9px] font-bold text-slate-400 uppercase truncate mt-0.5">
@@ -212,36 +253,31 @@ export default function FolderItemsPage({ folderId }: { folderId: string }) {
                         itemId: item.id,
                       });
                     }}
-                    className="p-2 text-slate-300 hover:text-slate-900 transition-colors"
+                    className="p-1.5 text-slate-300 hover:text-slate-900 transition-colors"
                   >
-                    <MoreVertical size={18} />
+                    <MoreVertical size={16} />
                   </button>
                 </div>
 
-                <div className="mt-4 flex items-center gap-3 pt-4 border-t border-slate-50">
-                  <div className="flex flex-col">
-                    <span className="text-[7px] font-black text-slate-300 uppercase tracking-widest">
-                      Scans
-                    </span>
-                    <span className="text-[11px] font-black text-slate-900 italic">
-                      {item.scanCount || 0}
-                    </span>
-                  </div>
-                  <div
-                    className={`ml-auto px-2 py-1 rounded-md text-[7px] font-black uppercase tracking-widest ${item.isDynamic ? "bg-emerald-50 text-emerald-500" : "bg-slate-100 text-slate-400"}`}
+                <div className="mt-3 flex items-center gap-2 pt-3 border-t border-slate-50">
+                  <span className="text-[7px] font-black text-slate-300 uppercase">
+                    {item.scanCount || 0} scans
+                  </span>
+                  <span
+                    className={`ml-auto px-2 py-0.5 rounded text-[7px] font-black uppercase ${item.isDynamic ? "bg-emerald-50 text-emerald-500" : "bg-slate-100 text-slate-400"}`}
                   >
                     {item.isDynamic ? "Dynamic" : "Static"}
-                  </div>
+                  </span>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="bg-white rounded-[3rem] p-20 border border-dashed border-slate-200 text-center">
-            <div className="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto mb-6 text-slate-200">
-              <LayoutGrid size={40} />
+          <div className="bg-white rounded-lg p-16 border border-dashed border-slate-200 text-center">
+            <div className="w-16 h-16 bg-slate-50 rounded-lg flex items-center justify-center mx-auto mb-4 text-slate-200">
+              <FolderPlus size={32} />
             </div>
-            <h2 className="text-xl font-black text-slate-900 uppercase">
+            <h2 className="text-lg font-black text-slate-900 uppercase">
               No assets found
             </h2>
             <p className="text-slate-400 font-bold uppercase text-[10px] mt-2 tracking-widest">
@@ -251,13 +287,13 @@ export default function FolderItemsPage({ folderId }: { folderId: string }) {
         )}
 
         {filteredItems.length > itemsPerPage && (
-          <div className="mt-12 flex items-center justify-center gap-4">
+          <div className="mt-10 flex items-center justify-center gap-3">
             <button
               disabled={page === 1}
               onClick={() => setPage((p) => p - 1)}
-              className="p-4 bg-white border border-slate-100 rounded-2xl disabled:opacity-30 hover:text-emerald-500 transition-all shadow-sm"
+              className="p-3 bg-white border border-slate-100 rounded-lg disabled:opacity-30 hover:text-emerald-500 transition-all shadow-sm"
             >
-              <ChevronLeft size={20} />
+              <ChevronLeft size={18} />
             </button>
             <span className="font-black text-slate-900 text-xs uppercase tracking-widest">
               Page {page}
@@ -265,9 +301,9 @@ export default function FolderItemsPage({ folderId }: { folderId: string }) {
             <button
               disabled={page * itemsPerPage >= filteredItems.length}
               onClick={() => setPage((p) => p + 1)}
-              className="p-4 bg-white border border-slate-100 rounded-2xl disabled:opacity-30 hover:text-emerald-500 transition-all shadow-sm"
+              className="p-3 bg-white border border-slate-100 rounded-lg disabled:opacity-30 hover:text-emerald-500 transition-all shadow-sm"
             >
-              <ChevronRight size={20} />
+              <ChevronRight size={18} />
             </button>
           </div>
         )}
@@ -275,32 +311,85 @@ export default function FolderItemsPage({ folderId }: { folderId: string }) {
 
       {menuConfig && (
         <div
-          className="fixed z-[100] w-56 bg-white rounded-2xl border border-slate-100 shadow-2xl py-2 animate-in fade-in zoom-in-95"
+          className="fixed z-[100] w-48 bg-white rounded-lg border border-slate-100 shadow-xl py-1"
           style={{ top: menuConfig.y, left: menuConfig.x }}
           onClick={(e) => e.stopPropagation()}
         >
           <button
             onClick={() => router.push(`/workspace/view/${menuConfig.itemId}`)}
-            className="w-full px-4 py-3 flex items-center gap-3 hover:bg-slate-50 transition-colors text-slate-600 text-xs font-black uppercase tracking-tight"
+            className="w-full px-4 py-2.5 flex items-center gap-2 hover:bg-slate-50 transition-colors text-slate-600 text-xs font-bold"
           >
-            <Edit3 size={16} className="text-emerald-500" /> Edit Asset
+            <Edit3 size={14} className="text-emerald-500" /> View
           </button>
+          {items.find(i => i.id === menuConfig.itemId)?.isDynamic && (
+            <button
+              onClick={() => {
+                setConfirmState({ type: "disable", itemId: menuConfig.itemId });
+                setMenuConfig(null);
+              }}
+              className="w-full px-4 py-2.5 flex items-center gap-2 hover:bg-slate-50 transition-colors text-slate-600 text-xs font-bold"
+            >
+              {items.find(i => i.id === menuConfig.itemId)?.isDisabled 
+                ? <Shield size={14} className="text-emerald-500" /> 
+                : <ShieldOff size={14} className="text-amber-500" />
+              }
+              {items.find(i => i.id === menuConfig.itemId)?.isDisabled ? "Enable" : "Disable"}
+            </button>
+          )}
           <button
-            onClick={() => handleRemoveFromFolder(menuConfig.itemId)}
-            className="w-full px-4 py-3 flex items-center gap-3 hover:bg-slate-50 transition-colors text-slate-600 text-xs font-black uppercase tracking-tight"
+            onClick={() => {
+              setConfirmState({ type: "remove", itemId: menuConfig.itemId });
+              setMenuConfig(null);
+            }}
+            className="w-full px-4 py-2.5 flex items-center gap-2 hover:bg-slate-50 transition-colors text-slate-600 text-xs font-bold"
           >
-            <FolderMinus size={16} className="text-amber-500" /> Remove from
-            Folder
+            <FolderMinus size={14} className="text-amber-500" /> Remove
           </button>
-          <div className="my-2 border-t border-slate-50" />
+          <div className="my-1 border-t border-slate-50" />
           <button
-            onClick={() => handleDeleteItem(menuConfig.itemId)}
-            className="w-full px-4 py-3 flex items-center gap-3 hover:bg-red-50 transition-colors text-red-500 text-xs font-black uppercase tracking-tight"
+            onClick={() => {
+              setConfirmState({ type: "delete", itemId: menuConfig.itemId });
+              setMenuConfig(null);
+            }}
+            className="w-full px-4 py-2.5 flex items-center gap-2 hover:bg-red-50 transition-colors text-red-500 text-xs font-bold"
           >
-            <Trash2 size={16} /> Delete Forever
+            <Trash2 size={14} /> Delete
           </button>
         </div>
       )}
+
+      <ConfirmModal
+        open={confirmState?.type === "remove"}
+        title="Remove from Folder"
+        message="Are you sure you want to remove this QR code from the folder? It will be moved to your main workspace."
+        confirmLabel="Remove"
+        type="warning"
+        onConfirm={handleRemoveFromFolder}
+        onCancel={() => setConfirmState(null)}
+      />
+
+      <ConfirmModal
+        open={confirmState?.type === "delete"}
+        title="Delete QR Code"
+        message="Are you sure you want to permanently delete this QR code? This action cannot be undone."
+        confirmLabel="Delete"
+        type="danger"
+        onConfirm={handleDeleteItem}
+        onCancel={() => setConfirmState(null)}
+      />
+
+      <ConfirmModal
+        open={confirmState?.type === "disable"}
+        title={items.find(i => i.id === confirmState?.itemId)?.isDisabled ? "Enable QR Code" : "Disable QR Code"}
+        message={items.find(i => i.id === confirmState?.itemId)?.isDisabled 
+          ? "This QR code will become active again. Users will be able to access the content."
+          : "This QR code will be discontinued. Users will see a 'Discontinued' message when they scan it."
+        }
+        confirmLabel={items.find(i => i.id === confirmState?.itemId)?.isDisabled ? "Enable" : "Disable"}
+        type={items.find(i => i.id === confirmState?.itemId)?.isDisabled ? "info" : "warning"}
+        onConfirm={handleDisableItem}
+        onCancel={() => setConfirmState(null)}
+      />
     </div>
   );
 }

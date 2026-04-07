@@ -1,11 +1,13 @@
 import { SubscriptionGuard } from "@/components/pages/SubscriptionGuard";
 import WorkspaceNav from "@/components/parts/workspace/AuthNav";
+import AdBanner from "@/components/parts/AdBanner";
+import Footer from "@/components/parts/Footer";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "QR Studio Workspace - Advanced QR Code Generation and Scan Wizard",
+  title: "QR Studio Workspace - Dashboard",
   description:
-    "Generate (Single & Batch) or Scan all your QR codes (Static & Dynamic) in real time.",
+    "Manage your QR codes, view analytics, and access advanced features in your QR Studio workspace.",
 };
 
 export default function Layout({
@@ -17,6 +19,8 @@ export default function Layout({
     <SubscriptionGuard>
       <WorkspaceNav />
       {children}
+      <AdBanner />
+      <Footer />
     </SubscriptionGuard>
   );
 }

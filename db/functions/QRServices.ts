@@ -14,8 +14,10 @@ import {
 import { db } from "../firebase";
 
 export const saveGeneratedQRCode = async (data: any, userId: string | null) => {
+  const { workspaceId, ...rest } = data;
   return await addDoc(collection(db, "qrcodes"), {
-    ...data,
+    ...rest,
+    workspaceId: workspaceId ?? null,
     ownerId: userId || "anonymous",
     createdAt: serverTimestamp(),
     scanCount: 0,

@@ -42,8 +42,8 @@ export default function CallbackPage() {
   if (status === "successful") {
     return (
       <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center p-6">
-        <div className="bg-white p-12 rounded-[3rem] shadow-xl shadow-slate-200/60 border border-slate-100 max-w-md w-full text-center">
-          <div className="bg-emerald-50 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-8">
+        <div className="bg-white p-12 rounded-lg shadow-xl shadow-slate-200/60 border border-slate-100 max-w-md w-full text-center">
+          <div className="bg-emerald-50 w-20 h-20 rounded-lg flex items-center justify-center mx-auto mb-8">
             <CheckCircle2 className="text-emerald-500" size={40} />
           </div>
 
@@ -58,7 +58,7 @@ export default function CallbackPage() {
 
           <button
             onClick={() => router.push("/workspace")}
-            className="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-emerald-600 transition-all flex items-center justify-center gap-2 group"
+            className="w-full bg-slate-900 text-white py-5 rounded-lg font-black uppercase tracking-widest text-xs hover:bg-emerald-600 transition-all flex items-center justify-center gap-2 group"
           >
             Enter Workspace
             <ArrowRight
@@ -74,8 +74,8 @@ export default function CallbackPage() {
   // 3. CANCELLED / ERROR STATE
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center p-6">
-      <div className="bg-white p-12 rounded-[3rem] shadow-xl shadow-slate-200/60 border border-slate-100 max-w-md w-full text-center">
-        <div className="bg-red-50 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-8">
+      <div className="bg-white p-12 rounded-lg shadow-xl shadow-slate-200/60 border border-slate-100 max-w-md w-full text-center">
+        <div className="bg-red-50 w-20 h-20 rounded-lg flex items-center justify-center mx-auto mb-8">
           <XCircle className="text-red-500" size={40} />
         </div>
 
@@ -90,7 +90,7 @@ export default function CallbackPage() {
 
         <button
           onClick={() => router.push("/subscribe")}
-          className="w-full bg-slate-100 text-slate-900 py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-slate-200 transition-all flex items-center justify-center gap-2"
+          className="w-full bg-slate-100 text-slate-900 py-5 rounded-lg font-black uppercase tracking-widest text-xs hover:bg-slate-200 transition-all flex items-center justify-center gap-2"
         >
           <RefreshCcw size={16} />
           Back to Pricing

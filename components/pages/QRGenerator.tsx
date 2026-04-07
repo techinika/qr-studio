@@ -10,10 +10,9 @@ import {
   Image as ImageIcon,
   Sparkles,
   Layers,
-  CopyPlus,
-  Shield,
   ArrowRight,
   Zap,
+  BarChart3,
 } from "lucide-react";
 import Footer from "../parts/Footer";
 import Nav from "../parts/Nav";
@@ -61,7 +60,7 @@ export default function QRGenerator() {
           originalUrl: url,
           hashedUrl: finalUrl,
           hash: uniqueHash,
-          workspaceId: workspace?.id ?? undefined,
+          workspaceId: workspace?.id ?? null,
           fgColor,
           bgColor,
           logo: logo ? "custom_logo_included" : "none",
@@ -91,71 +90,70 @@ export default function QRGenerator() {
       <Nav />
 
       <main className="grow max-w-6xl mx-auto w-full px-6 py-12">
-        <div className="max-w-2xl mb-12">
-          <h1 className="text-5xl font-black text-slate-900 mb-4 leading-tight">
-            QR <span className="text-emerald-500">Studio</span>
+        <div className="max-w-2xl mb-10">
+          <h1 className="text-4xl font-black text-slate-900 mb-3 leading-tight uppercase tracking-tighter">
+            QR <span className="text-emerald-500">Generator</span>
           </h1>
           <p className="text-lg text-slate-500">
-            Create high-quality, branded QR codes with custom colors and logos.
+            Create custom QR codes with your brand colors and logo.
           </p>
         </div>
         <AdBanner />
 
-        <div className="grid lg:grid-cols-3 gap-10">
-          <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white p-8 rounded-4xl border border-slate-100 shadow-sm">
-              <div className="flex items-center gap-3 mb-6">
+        <div className="grid lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-4">
+            <div className="bg-white p-6 rounded-lg border border-slate-100 shadow-sm">
+              <div className="flex items-center gap-3 mb-4">
                 <div className="bg-emerald-50 p-2 rounded-lg text-emerald-600">
-                  <LinkIcon size={20} />
+                  <LinkIcon size={18} />
                 </div>
-                <h2 className="text-xl font-bold">Destination URL</h2>
+                <h2 className="text-lg font-bold">Destination URL</h2>
               </div>
               <input
                 type="text"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="https://example.com"
-                className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all text-lg font-medium"
+                className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-100 focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-medium"
               />
             </div>
 
-            {/* Step 2: Appearance */}
-            <div className="bg-white p-8 rounded-4xl border border-slate-100 shadow-sm">
-              <div className="flex items-center gap-3 mb-6">
+            <div className="bg-white p-6 rounded-lg border border-slate-100 shadow-sm">
+              <div className="flex items-center gap-3 mb-4">
                 <div className="bg-emerald-50 p-2 rounded-lg text-emerald-600">
-                  <Palette size={20} />
+                  <Palette size={18} />
                 </div>
-                <h2 className="text-xl font-bold">Design & Colors</h2>
+                <h2 className="text-lg font-bold">Colors</h2>
               </div>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-3">
-                  <label className="text-sm font-bold text-slate-400 uppercase tracking-wider">
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                     Pattern Color
                   </label>
-                  <div className="flex items-center gap-4 p-3 rounded-2xl border border-slate-100 bg-slate-50">
+                  <div className="flex items-center gap-3 p-3 rounded-lg border border-slate-100 bg-slate-50">
                     <input
                       type="color"
                       value={fgColor}
                       onChange={(e) => setFgColor(e.target.value)}
-                      className="w-12 h-12 rounded-xl cursor-pointer border-none bg-transparent"
+                      className="w-10 h-10 rounded-lg cursor-pointer border-none bg-transparent"
                     />
-                    <span className="font-bold text-slate-600 uppercase">
+                    <span className="font-bold text-slate-600 uppercase text-sm">
                       {fgColor}
                     </span>
                   </div>
                 </div>
-                <div className="space-y-3">
-                  <label className="text-sm font-bold text-slate-400 uppercase tracking-wider">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                     Background
                   </label>
-                  <div className="flex items-center gap-4 p-3 rounded-2xl border border-slate-100 bg-slate-50">
+                  <div className="flex items-center gap-3 p-3 rounded-lg border border-slate-100 bg-slate-50">
                     <input
                       type="color"
                       value={bgColor}
                       onChange={(e) => setBgColor(e.target.value)}
-                      className="w-12 h-12 rounded-xl cursor-pointer border-none bg-transparent"
+                      className="w-10 h-10 rounded-lg cursor-pointer border-none bg-transparent"
                     />
-                    <span className="font-bold text-slate-600 uppercase">
+                    <span className="font-bold text-slate-600 uppercase text-sm">
                       {bgColor}
                     </span>
                   </div>
@@ -163,113 +161,100 @@ export default function QRGenerator() {
               </div>
             </div>
 
-            {/* Step 3: Branding */}
-            <div className="bg-white p-8 rounded-4xl border border-slate-100 shadow-sm">
-              <div className="flex items-center gap-3 mb-6">
+            <div className="bg-white p-6 rounded-lg border border-slate-100 shadow-sm">
+              <div className="flex items-center gap-3 mb-4">
                 <div className="bg-emerald-50 p-2 rounded-lg text-emerald-600">
-                  <ImageIcon size={20} />
+                  <ImageIcon size={18} />
                 </div>
-                <h2 className="text-xl font-bold">Center Logo</h2>
+                <h2 className="text-lg font-bold">Logo</h2>
               </div>
-              <div className="grid md:grid-cols-2 gap-6 items-center">
-                <div className="relative group border-2 border-dashed border-slate-200 hover:border-emerald-400 rounded-3xl transition-all h-32 flex flex-col items-center justify-center bg-slate-50/50">
+              <div className="grid md:grid-cols-2 gap-4 items-center">
+                <div className="relative group border-2 border-dashed border-slate-200 hover:border-emerald-400 rounded-lg transition-all h-24 flex flex-col items-center justify-center bg-slate-50/50">
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleLogoUpload}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                   />
-                  <Sparkles className="text-emerald-400 mb-2" size={24} />
-                  <p className="text-sm font-bold text-slate-500">
-                    Upload Icon
-                  </p>
+                  <Sparkles className="text-emerald-400 mb-1" size={20} />
+                  <p className="text-xs font-bold text-slate-500">Upload Icon</p>
                 </div>
                 {logo && (
                   <div className="flex flex-col items-center gap-2">
                     <img
                       src={logo}
                       alt="Preview"
-                      className="w-16 h-16 object-contain rounded-xl border border-slate-100 p-2 bg-white"
+                      className="w-12 h-12 object-contain rounded-lg border border-slate-100 p-1 bg-white"
                     />
                     <button
                       onClick={() => setLogo(undefined)}
                       className="text-xs font-bold text-red-400 hover:text-red-600"
                     >
-                      Remove Logo
+                      Remove
                     </button>
                   </div>
                 )}
               </div>
             </div>
-            <div className="bg-slate-900 rounded-4xl p-8 text-white relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-500">
-                <Sparkles size={120} />
-              </div>
 
-              <div className="relative z-10">
-                <h3 className="text-2xl font-black uppercase tracking-tight mb-6">
-                  Unlock Professional{" "}
-                  <span className="text-emerald-400">QR Tools</span>
-                </h3>
+            <div className="bg-slate-900 rounded-lg p-6 text-white">
+              <h3 className="text-lg font-black uppercase mb-4">
+                Unlock Advanced <span className="text-emerald-400">QR Tools</span>
+              </h3>
 
-                <div className="grid md:grid-cols-3 gap-6 mb-8">
-                  <div className="flex items-start gap-3">
-                    <div className="bg-emerald-500/20 p-2 rounded-lg text-emerald-400">
-                      <Zap size={18} />
-                    </div>
-                    <div>
-                      <p className="font-bold text-sm">Dynamic Codes</p>
-                      <p className="text-xs text-slate-400">
-                        Change links anytime
-                      </p>
-                    </div>
+              <div className="grid md:grid-cols-3 gap-4 mb-6">
+                <div className="flex items-start gap-2">
+                  <div className="bg-emerald-500/20 p-1.5 rounded-lg text-emerald-400">
+                    <Zap size={14} />
                   </div>
-                  <div className="flex items-start gap-3">
-                    <div className="bg-emerald-500/20 p-2 rounded-lg text-emerald-400">
-                      <CopyPlus size={18} />
-                    </div>
-                    <div>
-                      <p className="font-bold text-sm">Bulk Create</p>
-                      <p className="text-xs text-slate-400">
-                        100+ codes at once
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="bg-emerald-500/20 p-2 rounded-lg text-emerald-400">
-                      <Shield size={18} />
-                    </div>
-                    <div>
-                      <p className="font-bold text-sm">Passwords</p>
-                      <p className="text-xs text-slate-400">Secure your data</p>
-                    </div>
+                  <div>
+                    <p className="font-bold text-xs">Dynamic Codes</p>
+                    <p className="text-xs text-slate-400">Change links anytime</p>
                   </div>
                 </div>
-
-                <Link
-                  href="/login"
-                  className="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-white px-6 py-3 rounded-xl font-black uppercase tracking-widest text-xs transition-all active:scale-95 shadow-lg shadow-emerald-500/20"
-                >
-                  Upgrade to Pro <ArrowRight size={16} />
-                </Link>
+                <div className="flex items-start gap-2">
+                  <div className="bg-emerald-500/20 p-1.5 rounded-lg text-emerald-400">
+                    <BarChart3 size={14} />
+                  </div>
+                  <div>
+                    <p className="font-bold text-xs">Analytics</p>
+                    <p className="text-xs text-slate-400">Track scan activity</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="bg-emerald-500/20 p-1.5 rounded-lg text-emerald-400">
+                    <Layers size={14} />
+                  </div>
+                  <div>
+                    <p className="font-bold text-xs">Custom Branding</p>
+                    <p className="text-xs text-slate-400">Add your logo</p>
+                  </div>
+                </div>
               </div>
+
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-white px-4 py-2 rounded-lg font-black uppercase tracking-wider text-xs transition-all"
+              >
+                Sign In <ArrowRight size={14} />
+              </Link>
             </div>
           </div>
 
           <div className="lg:col-span-1">
-            <div className="sticky top-28 space-y-6">
-              <div className="bg-slate-900 p-8 rounded-[2.5rem] shadow-2xl shadow-emerald-900/20 text-center flex flex-col items-center">
-                <div className="bg-white/10 px-4 py-1 rounded-full text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em] mb-8">
-                  Live Rendering
+            <div className="sticky top-24 space-y-4">
+              <div className="bg-slate-900 p-6 rounded-lg shadow-lg text-center flex flex-col items-center">
+                <div className="bg-white/10 px-3 py-1 rounded-full text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em] mb-6">
+                  Live Preview
                 </div>
 
                 <div
                   ref={qrRef}
-                  className="p-6 rounded-4xl bg-white shadow-[0_0_50px_rgba(16,185,129,0.2)]"
+                  className="p-4 rounded-lg bg-white"
                 >
                   <QRCodeCanvas
                     value={getTrackableUrl(url || " ", uniqueHash)}
-                    size={220}
+                    size={180}
                     fgColor={fgColor}
                     bgColor={bgColor}
                     level="H"
@@ -278,8 +263,8 @@ export default function QRGenerator() {
                       logo
                         ? {
                             src: logo,
-                            height: 44,
-                            width: 44,
+                            height: 36,
+                            width: 36,
                             excavate: true,
                           }
                         : undefined
@@ -289,26 +274,20 @@ export default function QRGenerator() {
 
                 <button
                   onClick={downloadQR}
-                  className="w-full mt-10 flex items-center justify-center gap-3 bg-emerald-500 hover:bg-emerald-400 text-white py-5 rounded-3xl font-black text-lg transition-all shadow-xl shadow-emerald-500/20 active:scale-95"
+                  className="w-full mt-6 flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-white py-3 rounded-lg font-black text-sm transition-all shadow-lg"
                 >
-                  <Download size={22} />
+                  <Download size={18} />
                   {isSaving ? "SAVING..." : "DOWNLOAD PNG"}
                 </button>
-                <p className="mt-4 text-slate-500 text-xs font-medium uppercase tracking-widest">
-                  High Resolution Export
-                </p>
               </div>
 
-              <div className="bg-emerald-500/5 border border-emerald-500/20 p-6 rounded-4xl">
+              <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-lg">
                 <div className="flex gap-3 items-start">
-                  <Layers className="text-emerald-500 shrink-0" size={20} />
+                  <Layers className="text-emerald-500 shrink-0" size={18} />
                   <div>
-                    <h4 className="font-bold text-emerald-900 text-sm">
-                      Design Tip
-                    </h4>
-                    <p className="text-xs text-emerald-700/70 mt-1 leading-relaxed">
-                      Ensure your logo does not cover more than 30% of the QR
-                      code to keep it scannable across all devices.
+                    <h4 className="font-bold text-emerald-900 text-sm">Design Tip</h4>
+                    <p className="text-xs text-emerald-700/70 mt-1">
+                      Keep logo under 30% of QR code for best scanning.
                     </p>
                   </div>
                 </div>
@@ -318,6 +297,7 @@ export default function QRGenerator() {
         </div>
       </main>
 
+      <AdBanner />
       <AdBanner />
 
       <Footer />

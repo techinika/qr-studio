@@ -51,20 +51,17 @@ export default function LoginPage() {
       <Nav />
 
       <main className="grow flex items-center justify-center px-6 py-12">
-        <div className="max-w-5xl w-full grid lg:grid-cols-2 bg-white rounded-[3rem] overflow-hidden shadow-2xl shadow-emerald-500/5 border border-slate-100">
-          <div className="bg-slate-900 p-12 text-white flex flex-col justify-between relative overflow-hidden">
+        <div className="max-w-5xl w-full grid lg:grid-cols-2 bg-white rounded-lg overflow-hidden shadow-2xl shadow-emerald-500/5 border border-slate-100">
+          <div className="hidden lg:block bg-slate-900 p-12 text-white flex flex-col justify-between relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[100px] -mr-32 -mt-32"></div>
 
             <div className="relative z-10">
               <div className="flex items-center gap-3 mb-12">
-                <div className="bg-emerald-500 p-2 rounded-xl shadow-lg">
+                <div className="bg-emerald-500 p-2 rounded-lg shadow-lg">
                   <QrCodeIcon className="text-white w-6 h-6" />
                 </div>
                 <span className="text-2xl font-black tracking-tighter uppercase">
-                  QR STUDIO{" "}
-                  <span className="text-emerald-500 text-sm align-top ml-1">
-                    PRO
-                  </span>
+                  QR STUDIO
                 </span>
               </div>
 
@@ -80,8 +77,8 @@ export default function LoginPage() {
                   desc="Edit links after printing."
                 />
                 <BenefitItem
-                  title="Bulk Export"
-                  desc="Generate 100+ codes instantly."
+                  title="Analytics Dashboard"
+                  desc="Track scans and performance."
                 />
                 <BenefitItem
                   title="Secure Storage"
@@ -95,19 +92,19 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <div className="p-12 md:p-20 flex flex-col justify-center items-center text-center">
-            <div className="mb-10">
-              <h2 className="text-3xl font-black text-slate-900 mb-2 uppercase">
+          <div className="p-8 lg:p-20 flex flex-col justify-center items-center text-center">
+            <div className="mb-8 lg:mb-10">
+              <h2 className="text-2xl lg:text-3xl font-black text-slate-900 mb-2 uppercase">
                 Welcome Back
               </h2>
-              <p className="text-slate-400 font-medium">
+              <p className="text-slate-400 font-medium text-sm lg:text-base">
                 No passwords needed. Just your Google account.
               </p>
             </div>
 
             <button
               onClick={handleGoogleLogin}
-              className="w-full max-w-sm flex items-center justify-center gap-4 bg-white border-2 border-slate-100 hover:border-emerald-500 py-4 px-6 rounded-2xl transition-all active:scale-95 group"
+              className="w-full max-w-sm flex items-center justify-center gap-4 bg-white border-2 border-slate-100 hover:border-emerald-500 py-4 px-6 rounded-lg transition-all active:scale-95 group"
             >
               {loggingIn ? (
                 <Loader className="animate-spin text-emerald-600" />
@@ -136,13 +133,13 @@ export default function LoginPage() {
               </span>
             </button>
 
-            <div className="mt-12 flex items-center gap-8 opacity-40 grayscale group-hover:grayscale-0 transition-all">
+            <div className="mt-8 lg:mt-12 flex items-center gap-8 opacity-40 grayscale group-hover:grayscale-0 transition-all">
               <ShieldCheck size={20} />
               <Zap size={20} />
               <Globe size={20} />
             </div>
 
-            <p className="mt-12 text-slate-400 text-[10px] uppercase font-bold tracking-widest max-w-xs leading-relaxed">
+            <p className="mt-8 lg:mt-12 text-slate-400 text-[10px] uppercase font-bold tracking-widest max-w-xs leading-relaxed">
               {`By continuing, you agree to QR Studio's Terms of Service and Privacy
               Policy.`}
             </p>
@@ -158,6 +155,7 @@ export default function LoginPage() {
           ← Back to Scanner
         </Link>
       </div>
+      <AdBanner />
       <AdBanner />
     </div>
   );

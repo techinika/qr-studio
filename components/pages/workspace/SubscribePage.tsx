@@ -91,10 +91,10 @@ export default function SubscribePage() {
           {plans.map((plan) => (
             <div
               key={plan.planId}
-              className="bg-white rounded-[3rem] p-10 border border-slate-100 shadow-sm hover:shadow-2xl transition-all hover:-translate-y-2 group"
+              className="bg-white rounded-lg p-10 border border-slate-100 shadow-sm hover:shadow-2xl transition-all hover:-translate-y-2 group"
             >
               <div className="mb-8">
-                <div className="bg-emerald-50 w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <div className="bg-emerald-50 w-14 h-14 rounded-lg flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                   <Zap className="text-emerald-500" size={24} />
                 </div>
                 <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tight">
@@ -125,7 +125,7 @@ export default function SubscribePage() {
 
               <button
                 onClick={() => handleSelectPlan(plan)}
-                className="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-emerald-600 transition-all shadow-xl shadow-slate-100 active:scale-95"
+                className="w-full bg-slate-900 text-white py-5 rounded-lg font-black uppercase tracking-widest text-xs hover:bg-emerald-600 transition-all shadow-xl shadow-slate-100 active:scale-95"
               >
                 Choose {plan.planName}
               </button>

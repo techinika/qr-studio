@@ -2,8 +2,11 @@
 // components/AdBanner.tsx
 "use client";
 import { useEffect } from "react";
+import { useAuth } from "@/lib/AuthContext";
 
 export default function AdBanner() {
+  const { user } = useAuth();
+  
   useEffect(() => {
     try {
       ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push(
@@ -13,6 +16,10 @@ export default function AdBanner() {
       console.error(err);
     }
   }, []);
+
+  if (user) {
+    return null;
+  }
 
   return (
     <div className="my-8 flex justify-center overflow-hidden">
