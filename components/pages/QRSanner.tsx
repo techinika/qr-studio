@@ -294,6 +294,7 @@ export default function QRScannerHome() {
         </section>
 
         <AdBanner />
+        <AdBanner />
       </main>
 
       <Footer />

@@ -4,18 +4,23 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://qr-studio.techinika.com"),
-  title: "QR Scanner | Scan QR Codes Instantly",
+  title: "Best Free Online QR Code Scanner | Scan QR Codes Instantly",
   description:
-    "Scan any QR code instantly with your camera or from an image. Fast, secure, and free QR scanner with real-time tracking.",
+    "Scan any QR code instantly with your camera or from an image. Fast, secure, and free QR scanner. Best online QR code scanner.",
   keywords: [
     "QR scanner",
     "free QR scanner",
+    "QR code scanner online",
     "scan QR code",
     "QR code reader",
-    "QR code scanner online",
+    "best QR scanner",
+    "online QR code scanner",
+    "scan QR code online",
+    "camera QR scanner",
+    "QR code scanner free",
   ],
   openGraph: {
-    title: "QR Scanner | Scan QR Codes Instantly",
+    title: "Best Free Online QR Code Scanner",
     description: "Scan any QR code instantly with your camera or from an image. Fast, secure, and free QR scanner.",
     type: "website",
     url: "https://qr-studio.techinika.com/scan",
@@ -23,7 +28,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "QR Scanner | Scan QR Codes Instantly",
+    title: "Best Free Online QR Code Scanner",
     description: "Scan any QR code instantly with your camera or from an image. Fast, secure, and free.",
   },
   robots: {

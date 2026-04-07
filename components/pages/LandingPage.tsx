@@ -91,6 +91,7 @@ export default function LandingPage() {
       </section>
 
       <AdBanner />
+      <AdBanner />
 
       {/* Features Section */}
       <section className="py-16 px-6 bg-white">
@@ -187,6 +188,8 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      <AdBanner />
 
       {/* CTA Section */}
       <section className="py-16 px-6 bg-slate-900 text-white">

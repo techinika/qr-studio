@@ -4,19 +4,25 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://qr-studio.techinika.com"),
-  title: "QR Code Generator | Create Custom QR Codes Instantly",
+  title: "Best Free QR Code Generator | Create Custom QR Codes Instantly",
   description:
-    "Generate high-quality, scannable QR codes for free. Customize colors, add logos, and track scans. Fast, secure, and professional-grade.",
+    "Generate high-quality, scannable QR codes for free. Customize colors, add logos, and track scans. Best QR code generator online.",
   keywords: [
-    "free qr generator",
+    "QR code generator",
+    "best QR code generator",
+    "free QR code generator",
     "create qr code online",
     "custom qr code",
     "qr code with logo",
     "colorful qr code",
     "qr code maker",
+    "generate QR code",
+    "create QR code",
+    "free QR code maker",
+    "online QR code generator",
   ],
   openGraph: {
-    title: "QR Code Generator | Create Custom QR Codes",
+    title: "Best Free QR Code Generator",
     description: "Generate high-quality, scannable QR codes for free. Customize colors, add logos, and track scans.",
     type: "website",
     url: "https://qr-studio.techinika.com/generate",
@@ -24,7 +30,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "QR Code Generator",
+    title: "Best Free QR Code Generator",
     description: "Generate high-quality, scannable QR codes for free. Customize colors and add logos.",
   },
   robots: {

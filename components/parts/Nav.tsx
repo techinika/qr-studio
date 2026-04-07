@@ -52,16 +52,6 @@ function Nav() {
             >
               Generate
             </Link>
-            <Link
-              href="/solutions"
-              className={`text-sm font-bold uppercase tracking-widest transition-colors ${
-                isActive("/solutions")
-                  ? "text-emerald-600"
-                  : "text-slate-500 hover:text-emerald-500"
-              }`}
-            >
-              Solutions
-            </Link>
           </div>
 
           {user ? (
