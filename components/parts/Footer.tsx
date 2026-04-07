@@ -36,6 +36,9 @@ function Footer() {
           <div>
             <h4 className="font-bold text-slate-800 text-sm uppercase tracking-wider mb-4">Legal</h4>
             <div className="flex flex-col gap-2">
+              <Link href="/help-center" className="text-slate-500 text-sm hover:text-emerald-500 transition-colors">
+                Help Center
+              </Link>
               <Link href="/privacy" className="text-slate-500 text-sm hover:text-emerald-500 transition-colors">
                 Privacy Policy
               </Link>
