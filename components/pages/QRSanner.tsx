@@ -137,7 +137,7 @@ export default function QRScannerHome() {
         <AdBanner />
 
         <div className="grid lg:grid-cols-2 gap-8 mb-16">
-          <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm h-full flex flex-col min-h-[400px]">
+          <div className="bg-white p-6 rounded-lg border border-slate-100 shadow-sm h-full flex flex-col min-h-[400px]">
             <div className={`${isCameraActive ? "block" : "hidden"} space-y-4`}>
               <div className="relative rounded-lg overflow-hidden border-4 border-emerald-500 bg-black aspect-square">
                 <div id={scannerId} className="w-full h-full"></div>
@@ -154,7 +154,7 @@ export default function QRScannerHome() {
               <div className="space-y-4 my-auto">
                 <button
                   onClick={startScanner}
-                  className="w-full flex flex-col items-center justify-center gap-3 bg-emerald-500 hover:bg-emerald-600 text-white p-8 rounded-xl transition-all shadow-lg shadow-emerald-200"
+                  className="w-full flex flex-col items-center justify-center gap-3 bg-emerald-500 hover:bg-emerald-600 text-white p-8 rounded-lg transition-all shadow-lg shadow-emerald-200"
                 >
                   <Camera size={32} />
                   <span className="text-xl font-black uppercase">Open Camera</span>
@@ -200,7 +200,7 @@ export default function QRScannerHome() {
           </div>
 
           <div className="flex flex-col gap-4">
-            <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm flex flex-col flex-1">
+            <div className="bg-white p-6 rounded-lg border border-slate-100 shadow-sm flex flex-col flex-1">
               <span className="text-xs font-black text-emerald-600 uppercase tracking-[0.2em] bg-emerald-50 px-3 py-1 rounded-full mb-4 self-start">
                 Result
               </span>
@@ -267,7 +267,7 @@ export default function QRScannerHome() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-4">
-            <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-all text-center">
+            <div className="bg-white p-6 rounded-lg border border-slate-100 shadow-sm hover:shadow-md transition-all text-center">
               <div className="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Zap className="text-emerald-500" size={24} />
               </div>
@@ -275,7 +275,7 @@ export default function QRScannerHome() {
               <p className="text-slate-500 text-sm">Change destination URLs anytime.</p>
             </div>
 
-            <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-all text-center">
+            <div className="bg-white p-6 rounded-lg border border-slate-100 shadow-sm hover:shadow-md transition-all text-center">
               <div className="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <BarChart3 className="text-emerald-500" size={24} />
               </div>
@@ -283,7 +283,7 @@ export default function QRScannerHome() {
               <p className="text-slate-500 text-sm">Track scans in real-time.</p>
             </div>
 
-            <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-all text-center">
+            <div className="bg-white p-6 rounded-lg border border-slate-100 shadow-sm hover:shadow-md transition-all text-center">
               <div className="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Lock className="text-emerald-500" size={24} />
               </div>

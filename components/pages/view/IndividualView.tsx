@@ -132,7 +132,7 @@ export default function EditQRPage() {
           <div className="flex items-center gap-4">
             <div
               onClick={() => router.back()}
-              className="p-3 bg-white rounded-2xl border border-slate-100 text-slate-400 hover:text-slate-900 transition-all"
+              className="p-3 bg-white rounded-lg border border-slate-100 text-slate-400 hover:text-slate-900 transition-all"
             >
               <ArrowLeft size={20} />
             </div>
@@ -150,7 +150,7 @@ export default function EditQRPage() {
             <button
               onClick={handleUpdate}
               disabled={saving}
-              className="flex items-center gap-2 bg-slate-900 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-emerald-600 transition-all active:scale-95 disabled:opacity-50 shadow-xl shadow-slate-200"
+              className="flex items-center gap-2 bg-slate-900 text-white px-8 py-4 rounded-lg font-black uppercase tracking-widest text-[10px] hover:bg-emerald-600 transition-all active:scale-95 disabled:opacity-50 shadow-xl shadow-slate-200"
             >
               {saving ? (
                 <Loader2 className="animate-spin" size={16} />
@@ -165,7 +165,7 @@ export default function EditQRPage() {
         <div className="grid lg:grid-cols-12 gap-10">
           {/* LEFT: SETTINGS */}
           <div className="lg:col-span-7 space-y-6">
-            <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm space-y-8">
+            <div className="bg-white p-10 rounded-lg border border-slate-100 shadow-sm space-y-8">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-slate-800">
                   <LinkIcon size={18} className="text-emerald-500" />
@@ -202,7 +202,7 @@ export default function EditQRPage() {
                       type="text"
                       value={url}
                       onChange={(e) => setUrl(e.target.value)}
-                      className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-emerald-500 outline-none font-bold text-slate-700"
+                      className="w-full px-6 py-4 rounded-lg bg-slate-50 border border-slate-100 focus:border-emerald-500 outline-none font-bold text-slate-700"
                     />
                     <a
                       href={url}
@@ -215,7 +215,7 @@ export default function EditQRPage() {
                 </div>
 
                 {isProtected && (
-                  <div className="p-6 bg-amber-50 rounded-4xl border border-amber-100 space-y-3 animate-in fade-in slide-in-from-top-2">
+                  <div className="p-6 bg-amber-50 rounded-lg border border-amber-100 space-y-3 animate-in fade-in slide-in-from-top-2">
                     <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest">
                       Access Key
                     </p>
@@ -242,7 +242,7 @@ export default function EditQRPage() {
             </div>
 
             {/* DANGER ZONE */}
-            <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm flex items-center justify-between">
+            <div className="bg-white p-10 rounded-lg border border-slate-100 shadow-sm flex items-center justify-between">
               <div>
                 <h4 className="font-black text-slate-900 uppercase text-xs">
                   Danger Zone
@@ -253,7 +253,7 @@ export default function EditQRPage() {
               </div>
               <button
                 onClick={() => setShowDeleteModal(true)}
-                className="p-4 bg-red-50 text-red-500 rounded-2xl hover:bg-red-500 hover:text-white transition-all shadow-sm"
+                className="p-4 bg-red-50 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all shadow-sm"
               >
                 <Trash2 size={20} />
               </button>
@@ -264,7 +264,7 @@ export default function EditQRPage() {
           <div className="lg:col-span-5">
             <div className="sticky top-12 bg-slate-900 p-12 rounded-[4rem] text-center shadow-2xl">
               <div
-                className="bg-white p-8 rounded-[3rem] inline-block shadow-2xl"
+                className="bg-white p-8 rounded-lg inline-block shadow-2xl"
                 ref={qrRef}
               >
                 <QRCodeCanvas
@@ -288,13 +288,13 @@ export default function EditQRPage() {
               <div className="mt-10 space-y-4">
                 <button
                   onClick={downloadHQQR}
-                  className="w-full bg-emerald-500 text-white py-5 rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-emerald-400 transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
+                  className="w-full bg-emerald-500 text-white py-5 rounded-lg font-black uppercase tracking-widest text-[11px] hover:bg-emerald-400 transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
                 >
                   <Download size={16} /> Download High-Res
                 </button>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                  <div className="p-4 bg-white/5 rounded-lg border border-white/5">
                     <p className="text-[8px] font-black text-white/30 uppercase mb-1">
                       Scans
                     </p>
@@ -302,7 +302,7 @@ export default function EditQRPage() {
                       {qrData.scanCount || 0}
                     </p>
                   </div>
-                  <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                  <div className="p-4 bg-white/5 rounded-lg border border-white/5">
                     <p className="text-[8px] font-black text-white/30 uppercase mb-1">
                       Status
                     </p>
@@ -320,9 +320,9 @@ export default function EditQRPage() {
       {/* DELETE MODAL */}
       {showDeleteModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white w-full max-w-md rounded-[3rem] p-10 shadow-2xl scale-in-center">
+          <div className="bg-white w-full max-w-md rounded-lg p-10 shadow-2xl scale-in-center">
             <div className="flex justify-between items-start mb-6">
-              <div className="p-4 bg-red-50 text-red-500 rounded-2xl">
+              <div className="p-4 bg-red-50 text-red-500 rounded-lg">
                 <Trash2 size={24} />
               </div>
               <button
@@ -349,7 +349,7 @@ export default function EditQRPage() {
               <button
                 onClick={handleDelete}
                 disabled={saving}
-                className="w-full bg-red-500 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-red-600 transition-all flex items-center justify-center gap-2"
+                className="w-full bg-red-500 text-white py-4 rounded-lg font-black uppercase tracking-widest text-[10px] hover:bg-red-600 transition-all flex items-center justify-center gap-2"
               >
                 {saving ? (
                   <Loader2 className="animate-spin" size={16} />
@@ -359,7 +359,7 @@ export default function EditQRPage() {
               </button>
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="w-full bg-slate-50 text-slate-400 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-slate-100 transition-all"
+                className="w-full bg-slate-50 text-slate-400 py-4 rounded-lg font-black uppercase tracking-widest text-[10px] hover:bg-slate-100 transition-all"
               >
                 Keep Asset
               </button>

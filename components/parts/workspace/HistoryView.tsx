@@ -166,7 +166,11 @@ export function HistoryView({ items, folders }: { items: QRCodes[]; folders?: an
                   <Folder size={18} className="text-emerald-500" />
                   <div>
                     <p className="font-medium text-slate-800">{folder.name}</p>
-                    <p className="text-xs text-slate-400">{folder.itemCount || 0} items</p>
+                    <p className="text-xs text-slate-400">
+                      {folders.length > 0 && folder.itemCount !== undefined 
+                        ? `${folder.itemCount} items` 
+                        : `${items.filter(i => i.folderId === folder.id).length} items`}
+                    </p>
                   </div>
                 </button>
               ))}

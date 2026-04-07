@@ -102,7 +102,7 @@ export default function QRGenerator() {
 
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-4">
-            <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+            <div className="bg-white p-6 rounded-lg border border-slate-100 shadow-sm">
               <div className="flex items-center gap-3 mb-4">
                 <div className="bg-emerald-50 p-2 rounded-lg text-emerald-600">
                   <LinkIcon size={18} />
@@ -118,7 +118,7 @@ export default function QRGenerator() {
               />
             </div>
 
-            <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+            <div className="bg-white p-6 rounded-lg border border-slate-100 shadow-sm">
               <div className="flex items-center gap-3 mb-4">
                 <div className="bg-emerald-50 p-2 rounded-lg text-emerald-600">
                   <Palette size={18} />
@@ -161,7 +161,7 @@ export default function QRGenerator() {
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+            <div className="bg-white p-6 rounded-lg border border-slate-100 shadow-sm">
               <div className="flex items-center gap-3 mb-4">
                 <div className="bg-emerald-50 p-2 rounded-lg text-emerald-600">
                   <ImageIcon size={18} />
@@ -197,7 +197,7 @@ export default function QRGenerator() {
               </div>
             </div>
 
-            <div className="bg-slate-900 rounded-xl p-6 text-white">
+            <div className="bg-slate-900 rounded-lg p-6 text-white">
               <h3 className="text-lg font-black uppercase mb-4">
                 Unlock Advanced <span className="text-emerald-400">QR Tools</span>
               </h3>
@@ -243,7 +243,7 @@ export default function QRGenerator() {
 
           <div className="lg:col-span-1">
             <div className="sticky top-24 space-y-4">
-              <div className="bg-slate-900 p-6 rounded-xl shadow-lg text-center flex flex-col items-center">
+              <div className="bg-slate-900 p-6 rounded-lg shadow-lg text-center flex flex-col items-center">
                 <div className="bg-white/10 px-3 py-1 rounded-full text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em] mb-6">
                   Live Preview
                 </div>

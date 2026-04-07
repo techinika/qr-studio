@@ -51,13 +51,13 @@ export default function LoginPage() {
       <Nav />
 
       <main className="grow flex items-center justify-center px-6 py-12">
-        <div className="max-w-5xl w-full grid lg:grid-cols-2 bg-white rounded-[3rem] overflow-hidden shadow-2xl shadow-emerald-500/5 border border-slate-100">
+        <div className="max-w-5xl w-full grid lg:grid-cols-2 bg-white rounded-lg overflow-hidden shadow-2xl shadow-emerald-500/5 border border-slate-100">
           <div className="bg-slate-900 p-12 text-white flex flex-col justify-between relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[100px] -mr-32 -mt-32"></div>
 
             <div className="relative z-10">
               <div className="flex items-center gap-3 mb-12">
-                <div className="bg-emerald-500 p-2 rounded-xl shadow-lg">
+                <div className="bg-emerald-500 p-2 rounded-lg shadow-lg">
                   <QrCodeIcon className="text-white w-6 h-6" />
                 </div>
                 <span className="text-2xl font-black tracking-tighter uppercase">

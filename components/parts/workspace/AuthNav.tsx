@@ -89,7 +89,7 @@ export default function WorkspaceNav() {
       <div className="max-w-7xl mx-auto h-full flex items-center justify-between">
         <div className="flex items-center gap-8">
           <Link href="/workspace" className="flex items-center gap-2 group">
-            <div className="bg-emerald-500 p-2 rounded-xl shadow-lg shadow-emerald-200 group-hover:rotate-12 transition-transform">
+            <div className="bg-emerald-500 p-2 rounded-lg shadow-lg shadow-emerald-200 group-hover:rotate-12 transition-transform">
               <QrCodeIcon className="text-white w-5 h-5" />
             </div>
           </Link>
@@ -97,7 +97,7 @@ export default function WorkspaceNav() {
           <div className="relative">
             <button
               onClick={() => setIsTeamMenuOpen(!isTeamMenuOpen)}
-              className="flex items-center gap-3 hover:bg-slate-50 p-2 rounded-xl transition-all border border-transparent hover:border-slate-100"
+              className="flex items-center gap-3 hover:bg-slate-50 p-2 rounded-lg transition-all border border-transparent hover:border-slate-100"
             >
               <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center text-white font-black text-xs uppercase">
                 {workspace?.name?.charAt(0) || "W"}
@@ -117,7 +117,7 @@ export default function WorkspaceNav() {
             </button>
 
             {isTeamMenuOpen && (
-              <div className="absolute top-full left-0 mt-2 w-72 bg-white border border-slate-100 rounded-2xl shadow-2xl p-2 animate-in fade-in zoom-in-95">
+              <div className="absolute top-full left-0 mt-2 w-72 bg-white border border-slate-100 rounded-lg shadow-2xl p-2 animate-in fade-in zoom-in-95">
                 <p className="px-3 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
                   Your Workspaces
                 </p>
@@ -136,7 +136,7 @@ export default function WorkspaceNav() {
                             setIsTeamMenuOpen(false);
                           }
                         }}
-                        className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-all mb-1 group"
+                        className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 transition-all mb-1 group"
                       >
                         <div className="flex items-center gap-3">
                           <div
@@ -169,7 +169,7 @@ export default function WorkspaceNav() {
                     setIsTeamMenuOpen(false);
                     setIsCreateModalOpen(true);
                   }}
-                  className="w-full flex items-center gap-3 p-3 rounded-xl text-emerald-600 hover:bg-emerald-50 transition-all"
+                  className="w-full flex items-center gap-3 p-3 rounded-lg text-emerald-600 hover:bg-emerald-50 transition-all"
                 >
                   <Plus size={16} />
                   <span className="text-sm font-bold uppercase">New Team</span>
@@ -182,7 +182,7 @@ export default function WorkspaceNav() {
         <div className="flex items-center gap-6">
           <Link
             href="/workspace"
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-black uppercase text-[10px] tracking-widest transition-all ${isActive("/workspace") ? "bg-slate-900 text-white shadow-lg" : "text-slate-400 hover:bg-slate-50"}`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-black uppercase text-[10px] tracking-widest transition-all ${isActive("/workspace") ? "bg-slate-900 text-white shadow-lg" : "text-slate-400 hover:bg-slate-50"}`}
           >
             <LayoutDashboard size={14} />
             <span className="hidden sm:inline">Dashboard</span>
@@ -213,7 +213,7 @@ export default function WorkspaceNav() {
             </button>
 
             {isUserMenuOpen && (
-              <div className="absolute top-full right-0 mt-2 w-64 bg-white border border-slate-100 rounded-2xl shadow-2xl p-2 animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="absolute top-full right-0 mt-2 w-64 bg-white border border-slate-100 rounded-lg shadow-2xl p-2 animate-in fade-in slide-in-from-top-2 duration-200">
                 <div className="px-4 py-3 border-b border-slate-50 mb-2">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
                     Logged in as
@@ -226,7 +226,7 @@ export default function WorkspaceNav() {
                 <Link
                   href="/workspace/profile"
                   onClick={() => setIsUserMenuOpen(false)}
-                  className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-bold text-sm transition-all"
+                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 text-slate-600 font-bold text-sm transition-all"
                 >
                   <Settings size={18} className="text-slate-400" /> Account
                   Settings
@@ -235,7 +235,7 @@ export default function WorkspaceNav() {
                 <Link
                   href="/workspace/team"
                   onClick={() => setIsUserMenuOpen(false)}
-                  className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 text-slate-600 font-bold text-sm transition-all"
+                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 text-slate-600 font-bold text-sm transition-all"
                 >
                   <Users size={18} className="text-slate-400" /> Team Management
                 </Link>
@@ -244,7 +244,7 @@ export default function WorkspaceNav() {
 
                 <button
                   onClick={handleSignOut}
-                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-red-50 text-red-500 font-bold text-sm transition-all"
+                  className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-red-50 text-red-500 font-bold text-sm transition-all"
                 >
                   <LogOut size={18} /> Log Out
                 </button>
@@ -257,7 +257,7 @@ export default function WorkspaceNav() {
       {pendingInvite && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
           <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" />
-          <div className="relative bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl p-10 text-center animate-in zoom-in-95">
+          <div className="relative bg-white w-full max-w-sm rounded-lg shadow-2xl p-10 text-center animate-in zoom-in-95">
             <div className="w-20 h-20 bg-amber-50 text-amber-500 rounded-3xl flex items-center justify-center mx-auto mb-6">
               <Building2 size={40} />
             </div>
@@ -275,14 +275,14 @@ export default function WorkspaceNav() {
               <button
                 onClick={() => handleInviteResponse(true)}
                 disabled={isActionLoading}
-                className="w-full bg-emerald-500 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-100 disabled:opacity-50"
+                className="w-full bg-emerald-500 text-white py-4 rounded-lg font-black uppercase tracking-widest text-xs hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-100 disabled:opacity-50"
               >
                 Accept & Join
               </button>
               <button
                 onClick={() => handleInviteResponse(false)}
                 disabled={isActionLoading}
-                className="w-full bg-white text-red-400 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-red-50 transition-all disabled:opacity-50"
+                className="w-full bg-white text-red-400 py-4 rounded-lg font-black uppercase tracking-widest text-xs hover:bg-red-50 transition-all disabled:opacity-50"
               >
                 Decline
               </button>

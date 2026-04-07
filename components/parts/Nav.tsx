@@ -85,10 +85,10 @@ function Nav() {
       </nav>
 
       <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-100">
-        <div className="bg-slate-900/90 backdrop-blur-lg rounded-xl p-2 shadow-2xl border border-white/10 flex items-center justify-around">
+        <div className="bg-slate-900/90 backdrop-blur-lg rounded-lg p-2 shadow-2xl border border-white/10 flex items-center justify-around">
           <Link
             href="/scan"
-            className={`flex flex-1 items-center justify-center gap-3 py-4 rounded-xl transition-all ${
+            className={`flex flex-1 items-center justify-center gap-3 py-4 rounded-lg transition-all ${
               isActive("/scan")
                 ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/40"
                 : "text-slate-400 hover:text-white"
@@ -104,7 +104,7 @@ function Nav() {
 
           <Link
             href="/generate"
-            className={`flex flex-1 items-center justify-center gap-3 py-4 rounded-xl transition-all ${
+            className={`flex flex-1 items-center justify-center gap-3 py-4 rounded-lg transition-all ${
               isActive("/generate")
                 ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/40"
                 : "text-slate-400 hover:text-white"

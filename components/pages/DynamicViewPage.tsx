@@ -96,7 +96,7 @@ export default function RedirectGate({ qrcode }: { qrcode: string }) {
     return (
       <div className="min-h-screen flex items-center justify-center p-6 bg-[#F8FAFC]">
         <div className="max-w-md w-full text-center space-y-6">
-          <div className="w-20 h-20 bg-red-50 rounded-4xl flex items-center justify-center mx-auto text-red-500">
+          <div className="w-20 h-20 bg-red-50 rounded-lg flex items-center justify-center mx-auto text-red-500">
             <AlertTriangle size={32} />
           </div>
           <h1 className="text-3xl font-black text-slate-900 uppercase">
@@ -120,10 +120,10 @@ export default function RedirectGate({ qrcode }: { qrcode: string }) {
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-[#F8FAFC]">
       <div className="max-w-md w-full">
-        <div className="bg-white rounded-[3.5rem] border border-slate-100 shadow-2xl overflow-hidden">
+        <div className="bg-white rounded-lg border border-slate-100 shadow-2xl overflow-hidden">
           <div className="p-12 text-center">
             <div className="flex justify-center mb-8">
-              <div className="bg-slate-900 p-4 rounded-2xl text-emerald-400 shadow-xl shadow-emerald-500/20 rotate-3">
+              <div className="bg-slate-900 p-4 rounded-lg text-emerald-400 shadow-xl shadow-emerald-500/20 rotate-3">
                 <Lock size={28} />
               </div>
             </div>
@@ -156,7 +156,7 @@ export default function RedirectGate({ qrcode }: { qrcode: string }) {
                     if (error) setError(null);
                   }}
                   placeholder="••••••••"
-                  className="w-full px-6 py-5 rounded-2xl bg-slate-50 border border-slate-100 focus:border-emerald-500 outline-none font-bold transition-all text-center tracking-[0.5em]"
+                  className="w-full px-6 py-5 rounded-lg bg-slate-50 border border-slate-100 focus:border-emerald-500 outline-none font-bold transition-all text-center tracking-[0.5em]"
                 />
               </div>
 
@@ -168,7 +168,7 @@ export default function RedirectGate({ qrcode }: { qrcode: string }) {
 
               <button
                 disabled={isVerifying}
-                className="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 hover:bg-emerald-500 transition-all active:scale-95 disabled:opacity-50"
+                className="w-full bg-slate-900 text-white py-5 rounded-lg font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 hover:bg-emerald-500 transition-all active:scale-95 disabled:opacity-50"
               >
                 {isVerifying ? (
                   <>Verifying Identity...</>

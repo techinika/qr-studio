@@ -207,11 +207,11 @@ export default function SolutionsPage() {
           {industries.map((item) => (
             <div
               key={item.id}
-              className="group p-1 bg-slate-50 rounded-2xl hover:bg-emerald-500 transition-all duration-500"
+              className="group p-1 bg-slate-50 rounded-lg hover:bg-emerald-500 transition-all duration-500"
             >
-              <div className="bg-white p-8 rounded-xl h-full flex flex-col">
+              <div className="bg-white p-8 rounded-lg h-full flex flex-col">
                 <div
-                  className={`w-16 h-16 ${item.color} rounded-xl flex items-center justify-center mb-6`}
+                  className={`w-16 h-16 ${item.color} rounded-lg flex items-center justify-center mb-6`}
                 >
                   {item.icon}
                 </div>
@@ -249,8 +249,8 @@ export default function SolutionsPage() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          <div className="bg-white p-6 rounded-xl border border-slate-100">
-            <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mb-4 text-emerald-600">
+          <div className="bg-white p-6 rounded-lg border border-slate-100">
+            <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mb-4 text-emerald-600">
               <Zap size={24} />
             </div>
             <h3 className="font-black text-slate-900 uppercase text-sm mb-2">
@@ -261,8 +261,8 @@ export default function SolutionsPage() {
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-xl border border-slate-100">
-            <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mb-4 text-emerald-600">
+          <div className="bg-white p-6 rounded-lg border border-slate-100">
+            <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mb-4 text-emerald-600">
               <BarChart3 size={24} />
             </div>
             <h3 className="font-black text-slate-900 uppercase text-sm mb-2">
@@ -273,8 +273,8 @@ export default function SolutionsPage() {
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-xl border border-slate-100">
-            <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mb-4 text-emerald-600">
+          <div className="bg-white p-6 rounded-lg border border-slate-100">
+            <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mb-4 text-emerald-600">
               <Globe size={24} />
             </div>
             <h3 className="font-black text-slate-900 uppercase text-sm mb-2">
@@ -299,13 +299,13 @@ export default function SolutionsPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/generate"
-              className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all shadow-xl"
+              className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-4 rounded-lg font-black uppercase tracking-widest text-sm transition-all shadow-xl"
             >
               Create QR Code
             </Link>
             <Link
               href="/solutions/restaurants"
-              className="bg-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all border border-white/20"
+              className="bg-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-lg font-black uppercase tracking-widest text-sm transition-all border border-white/20"
             >
               View Examples
             </Link>

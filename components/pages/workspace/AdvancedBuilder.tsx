@@ -173,7 +173,7 @@ export default function AdvancedBuilder() {
           <div className="flex items-center gap-4">
             <Link
               href="/workspace"
-              className="p-2 hover:bg-slate-50 rounded-xl transition-all"
+              className="p-2 hover:bg-slate-50 rounded-lg transition-all"
             >
               <ArrowLeft size={20} className="text-slate-400" />
             </Link>
@@ -186,7 +186,7 @@ export default function AdvancedBuilder() {
           <button
             onClick={saveToUniverse}
             disabled={isSaving}
-            className="bg-slate-900 text-white px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-emerald-600 transition-all flex items-center gap-2 disabled:opacity-50"
+            className="bg-slate-900 text-white px-8 py-3 rounded-lg font-black uppercase tracking-widest text-[10px] hover:bg-emerald-600 transition-all flex items-center gap-2 disabled:opacity-50"
           >
             {isSaving ? (
               <Loader2 className="animate-spin" size={16} />
@@ -217,7 +217,7 @@ export default function AdvancedBuilder() {
             />
           </div>
 
-          <div className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-slate-100">
+          <div className="flex items-center gap-4 p-4 bg-white rounded-lg border border-slate-100">
             <Folder size={18} className="text-slate-400" />
             <select
               value={selectedFolder || ""}
@@ -240,7 +240,7 @@ export default function AdvancedBuilder() {
           </div>
 
           {isDynamic && (
-            <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-2xl flex items-start gap-3">
+            <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-lg flex items-start gap-3">
               <AlertCircle className="text-emerald-500 shrink-0" size={18} />
               <p className="text-[10px] font-bold text-emerald-700 uppercase leading-relaxed tracking-wide">
                 Notice: Dynamic redirection is active. Destinations are managed
@@ -250,7 +250,7 @@ export default function AdvancedBuilder() {
             </div>
           )}
 
-          <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm space-y-6">
+          <div className="bg-white p-8 rounded-lg border border-slate-100 shadow-sm space-y-6">
             <h3 className="font-black uppercase tracking-tight text-slate-800 flex items-center gap-2">
               <LinkIcon size={18} className="text-emerald-500" /> Asset Data
             </h3>
@@ -264,12 +264,12 @@ export default function AdvancedBuilder() {
                   type="text"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
-                  className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-emerald-500 outline-none font-bold text-slate-700"
+                  className="w-full px-6 py-4 rounded-lg bg-slate-50 border border-slate-100 focus:border-emerald-500 outline-none font-bold text-slate-700"
                   placeholder="https://..."
                 />
               </div>
               {isPasswordProtected && (
-                <div className="p-5 bg-amber-50 rounded-2xl border border-amber-100">
+                <div className="p-5 bg-amber-50 rounded-lg border border-amber-100">
                   <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-2">
                     Gate Password
                   </p>
@@ -277,7 +277,7 @@ export default function AdvancedBuilder() {
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-white px-4 py-3 rounded-xl border border-amber-200 outline-none font-bold"
+                    className="w-full bg-white px-4 py-3 rounded-lg border border-amber-200 outline-none font-bold"
                     placeholder="Enter password"
                   />
                 </div>
@@ -285,14 +285,14 @@ export default function AdvancedBuilder() {
             </div>
           </div>
 
-          <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm space-y-6">
+          <div className="bg-white p-8 rounded-lg border border-slate-100 shadow-sm space-y-6">
             <h3 className="font-black uppercase tracking-tight text-slate-800">Colors</h3>
             <div className="grid grid-cols-2 gap-6">
               <div className="space-y-3">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                   Pattern Color
                 </label>
-                <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-lg border border-slate-100">
                   <input
                     type="color"
                     value={fgColor}
@@ -300,7 +300,7 @@ export default function AdvancedBuilder() {
                       setFgColor(e.target.value);
                       setQrStyle({ ...qrStyle, dotColor: e.target.value, cornerColor: e.target.value });
                     }}
-                    className="w-12 h-12 cursor-pointer rounded-xl"
+                    className="w-12 h-12 cursor-pointer rounded-lg"
                   />
                   <span className="font-black text-slate-600 uppercase text-sm">
                     {fgColor}
@@ -311,12 +311,12 @@ export default function AdvancedBuilder() {
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                   Background
                 </label>
-                <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-lg border border-slate-100">
                   <input
                     type="color"
                     value={bgColor}
                     onChange={(e) => setBgColor(e.target.value)}
-                    className="w-12 h-12 cursor-pointer rounded-xl"
+                    className="w-12 h-12 cursor-pointer rounded-lg"
                   />
                   <span className="font-black text-slate-600 uppercase text-sm">
                     {bgColor}
@@ -326,11 +326,11 @@ export default function AdvancedBuilder() {
             </div>
           </div>
 
-          <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm space-y-6">
+          <div className="bg-white p-8 rounded-lg border border-slate-100 shadow-sm space-y-6">
             <h3 className="font-black uppercase tracking-tight text-slate-800">Logo Branding</h3>
             <div className="flex items-center gap-6">
-              <label className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 cursor-pointer hover:bg-slate-100 transition-all flex-1">
-                <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center border overflow-hidden">
+              <label className="flex items-center gap-4 p-4 bg-slate-50 rounded-lg border border-slate-100 cursor-pointer hover:bg-slate-100 transition-all flex-1">
+                <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center border overflow-hidden">
                   {logo ? (
                     <img src={logo} alt="Logo" className="w-full h-full object-contain" />
                   ) : (
@@ -360,7 +360,7 @@ export default function AdvancedBuilder() {
               {logo && (
                 <button
                   onClick={() => setLogo(null)}
-                  className="p-3 hover:bg-red-50 rounded-xl transition-all"
+                  className="p-3 hover:bg-red-50 rounded-lg transition-all"
                 >
                   <X size={18} className="text-red-500" />
                 </button>
@@ -370,8 +370,8 @@ export default function AdvancedBuilder() {
         </div>
 
         <div className="lg:col-span-5">
-          <div className="sticky top-28 bg-slate-900 p-10 rounded-3xl shadow-2xl text-center">
-            <div className="bg-white p-6 rounded-2xl inline-block shadow-2xl" ref={qrRef}>
+          <div className="sticky top-28 bg-slate-900 p-10 rounded-lg shadow-2xl text-center">
+            <div className="bg-white p-6 rounded-lg inline-block shadow-2xl" ref={qrRef}>
               <QRCodeCanvas
                 value={qrValue}
                 size={220}
@@ -388,7 +388,7 @@ export default function AdvancedBuilder() {
             <div className="mt-8 space-y-3">
               <button
                 onClick={handleDownload}
-                className="w-full bg-emerald-500 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-emerald-400 transition-all flex items-center justify-center gap-2"
+                className="w-full bg-emerald-500 text-white py-4 rounded-lg font-black uppercase tracking-widest text-[11px] hover:bg-emerald-400 transition-all flex items-center justify-center gap-2"
               >
                 <Download size={16} /> Download HQ PNG
               </button>
@@ -403,26 +403,26 @@ export default function AdvancedBuilder() {
       {showFolderModal && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
           <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setShowFolderModal(false)} />
-          <div className="relative bg-white w-full max-w-md rounded-3xl shadow-2xl p-8">
+          <div className="relative bg-white w-full max-w-md rounded-lg shadow-2xl p-8">
             <h3 className="text-xl font-black text-slate-900 mb-6">Create New Folder</h3>
             <input
               type="text"
               value={newFolderName}
               onChange={(e) => setNewFolderName(e.target.value)}
               placeholder="Folder name"
-              className="w-full px-6 py-4 rounded-xl bg-slate-50 border border-slate-100 outline-none focus:border-emerald-500 font-bold mb-6"
+              className="w-full px-6 py-4 rounded-lg bg-slate-50 border border-slate-100 outline-none focus:border-emerald-500 font-bold mb-6"
               autoFocus
             />
             <div className="flex gap-4">
               <button
                 onClick={() => setShowFolderModal(false)}
-                className="flex-1 py-4 rounded-xl bg-slate-100 font-black uppercase text-sm hover:bg-slate-200 transition-all"
+                className="flex-1 py-4 rounded-lg bg-slate-100 font-black uppercase text-sm hover:bg-slate-200 transition-all"
               >
                 Cancel
               </button>
               <button
                 onClick={createFolder}
-                className="flex-1 py-4 rounded-xl bg-emerald-500 text-white font-black uppercase text-sm hover:bg-emerald-600 transition-all"
+                className="flex-1 py-4 rounded-lg bg-emerald-500 text-white font-black uppercase text-sm hover:bg-emerald-600 transition-all"
               >
                 Create
               </button>
@@ -438,10 +438,10 @@ function FeatureToggle({ active, onToggle, icon, label, desc }: any) {
   return (
     <button
       onClick={onToggle}
-      className={`p-6 rounded-2xl border transition-all text-left flex flex-col gap-3 relative overflow-hidden ${active ? "bg-white border-emerald-500 shadow-xl shadow-emerald-500/5" : "bg-white border-slate-100 hover:border-slate-300"}`}
+      className={`p-6 rounded-lg border transition-all text-left flex flex-col gap-3 relative overflow-hidden ${active ? "bg-white border-emerald-500 shadow-xl shadow-emerald-500/5" : "bg-white border-slate-100 hover:border-slate-300"}`}
     >
       <div
-        className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${active ? "bg-emerald-500 text-white" : "bg-slate-50 text-slate-400"}`}
+        className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${active ? "bg-emerald-500 text-white" : "bg-slate-50 text-slate-400"}`}
       >
         {icon}
       </div>
