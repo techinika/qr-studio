@@ -3,10 +3,10 @@ import React from "react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://qr.studio"),
-  title: "QR STUDIO | Free Dynamic QR Code Generator with Analytics",
+  metadataBase: new URL("https://qr-studio.techinika.com"),
+  title: "QR STUDIO | Dynamic QR Code Generator with Analytics",
   description:
-    "Create, customize, and track QR codes instantly. Free QR code generator with custom colors, logos, dynamic URLs, and real-time analytics. No signup required.",
+    "Create, customize, and track QR codes instantly. Professional QR code generator with custom colors, logos, dynamic URLs, and real-time analytics.",
   keywords: [
     "QR code generator",
     "free QR code",
@@ -17,16 +17,16 @@ export const metadata: Metadata = {
     "QR code with logo",
   ],
   openGraph: {
-    title: "QR STUDIO | Free Dynamic QR Code Generator",
-    description: "Create and track QR codes with professional-grade tools. Completely free with no signup required.",
+    title: "QR STUDIO | Dynamic QR Code Generator",
+    description: "Create and track QR codes with professional-grade tools.",
     type: "website",
-    url: "https://qr.studio",
+    url: "https://qr-studio.techinika.com",
     siteName: "QR STUDIO",
   },
   twitter: {
     card: "summary_large_image",
-    title: "QR STUDIO | Free Dynamic QR Code Generator",
-    description: "Create and track QR codes with professional-grade tools. Completely free with no signup required.",
+    title: "QR STUDIO | Dynamic QR Code Generator",
+    description: "Create and track QR codes with professional-grade tools.",
   },
   robots: {
     index: true,
@@ -45,8 +45,8 @@ const jsonLd = {
     price: "0",
     priceCurrency: "USD",
   },
-  description: "Free dynamic QR code generator with real-time analytics, custom branding, and password protection.",
-  url: "https://qr.studio",
+  description: "Dynamic QR code generator with real-time analytics, custom branding, and password protection.",
+  url: "https://qr-studio.techinika.com",
 };
 
 function page() {

@@ -4,7 +4,7 @@ import Footer from "@/components/parts/Footer";
 import Nav from "@/components/parts/Nav";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://qr.studio"),
+  metadataBase: new URL("https://qr-studio.techinika.com"),
   title: "Terms of Service | QR STUDIO",
   description: "Terms of Service for QR STUDIO - Read our terms and conditions.",
 };
@@ -107,7 +107,7 @@ export default function TermsPage() {
           <section className="space-y-4">
             <h2 className="text-xl font-black uppercase">Contact Us</h2>
             <p className="text-slate-600">
-              If you have any questions about these Terms of Service, please contact us at support@qr.studio
+              If you have any questions about these Terms of Service, please contact us at products@techinika.com
             </p>
           </section>
         </div>
